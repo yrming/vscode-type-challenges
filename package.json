@@ -10,7 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:type-challenges.helloWorld"
+		"*"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -19,7 +19,24 @@
 				"command": "type-challenges.helloWorld",
 				"title": "Hello World"
 			}
-		]
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "typeChallenges",
+					"title": "Type Challenges",
+					"icon": "resources/tc.svg"
+				}
+			]
+		},
+		"views": {
+			"typeChallenges": [
+				{
+					"id": "typeChallenges.questions",
+					"name": "Type Challenges"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
