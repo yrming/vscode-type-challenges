@@ -4,7 +4,7 @@ import { DifficultyItem } from './DifficultyItem';
 import { TagItem } from './TagItem';
 import { QuestionItem } from './QuestionItem';
 import { getAllQuestions } from '../../utils';
-import { Category, Difficulty, Question } from '../../type';
+import { Category, Commands, Difficulty, Question } from '../../type';
 
 export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     private _onDidChangeTreeData: EventEmitter<QuestionItem | undefined | void> = new EventEmitter<QuestionItem | undefined | void>();
@@ -55,7 +55,11 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     genQuestionsItems(questions: Question[]): QuestionItem[] {
         const questionItems: QuestionItem[] = [];
         questions.forEach(question => {
-            const treeItem = new QuestionItem(`${question.idx!} - ${question.title!}`);
+            const treeItem = new QuestionItem(`${question.idx!} - ${question.title!}`, {
+                title: 'Preview Question',
+                command: Commands.PreviewQuestion,
+                arguments: [question.idx]
+            });
             questionItems.push(treeItem);
         });
         return questionItems;

@@ -22,3 +22,7 @@ export interface Question {
     testCases?: string
     _original?: string
 }
+
+export enum Commands {
+    PreviewQuestion = 'typeChallenges.previewQuestion'
+}
