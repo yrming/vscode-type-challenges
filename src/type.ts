@@ -16,6 +16,7 @@ export enum Difficulty {
 export interface Question {
     idx?: number
     title?: string
+    readMe?: string
     tags?: string
     difficulty?: string
     template?: string

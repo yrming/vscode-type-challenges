@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { Uri } from 'vscode';
 import type { Question } from '../type';
 
 export function getAllQuestions(): Question[] {
@@ -16,6 +17,8 @@ export function getAllQuestions(): Question[] {
             question.title = matches[3];
             question._original = folderName;
         }
+        const readMePath = path.join(rootPath, folderName, 'README.md');
+        question.readMe = fs.readFileSync(readMePath).toString();
         result.push(question);
     });
     result.sort((a, b) => a.idx! - b.idx!);
