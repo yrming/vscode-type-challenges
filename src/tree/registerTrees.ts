@@ -1,7 +1,7 @@
 import { ExtensionContext, window } from 'vscode';
-import { QuestionsTreeProvider } from './questions/questionsTreeProvider';
+import { QuestionsProvider } from './questions/QuestionsProvider';
 
 export async function registerTrees(context: ExtensionContext): Promise<void> {
-    const questionsTreeProvider = new QuestionsTreeProvider();
-    window.registerTreeDataProvider("typeChallenges.questions", questionsTreeProvider);
+    const questionsProvider = new QuestionsProvider();
+    window.registerTreeDataProvider("typeChallenges.questions", questionsProvider);
 }

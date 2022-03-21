@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { Question } from '../type';
 
-export function getQuestions(): Question[] {
+export function getAllQuestions(): Question[] {
     const result: Question[] = [];
     const rootPath = path.join(__dirname, '..', '..' ,'resources', 'data');
     const questions = fs.readdirSync(rootPath);
@@ -13,11 +13,18 @@ export function getQuestions(): Question[] {
         if (Array.isArray(matches)) {
             question.idx = parseInt(matches[1]);
             question.difficulty = matches[2];
-            question.title = matches[3];
             question._original = folderName;
         }
         result.push(question);
     });
     result.sort((a, b) => a.idx! - b.idx!);
     return result;
+}
+
+export function getQuestionsByDifficulty(): Question[] {
+    return [];
+}
+
+export function getQuestionsByTag(): Question[] {
+    return [];
 }
