@@ -1,6 +1,6 @@
 import { Event, EventEmitter, ProviderResult, TreeDataProvider } from 'vscode';
 import { QuestionTreeItem } from './QuestionTreeItem';
-import { getQuestions } from '../../data';
+import { getQuestions } from '../../utils';
 import { Question } from '../../type';
 
 export class QuestionsTreeProvider implements TreeDataProvider<QuestionTreeItem> {
