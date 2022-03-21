@@ -13,18 +13,11 @@ export function getAllQuestions(): Question[] {
         if (Array.isArray(matches)) {
             question.idx = parseInt(matches[1]);
             question.difficulty = matches[2];
+            question.title = matches[3];
             question._original = folderName;
         }
         result.push(question);
     });
     result.sort((a, b) => a.idx! - b.idx!);
     return result;
-}
-
-export function getQuestionsByDifficulty(): Question[] {
-    return [];
-}
-
-export function getQuestionsByTag(): Question[] {
-    return [];
 }

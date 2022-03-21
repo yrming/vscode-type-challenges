@@ -9,6 +9,7 @@ export enum Difficulty {
     Warm = 'Warm',
     Easy = 'Easy',
     Medium = 'Medium',
+    Hard = 'Hard',
     Extreme = 'Extreme'
 }
 
