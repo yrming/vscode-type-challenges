@@ -1,7 +1,7 @@
 <br>
 <p align="center">
 <a href="https://github.com/type-challenges/type-challenges" target="_blank">
-<img src="resources/logo.png" alt="Type Challenges" width="280"/>
+<img src="resources/full-name-logo.png" alt="Type Challenges" width="350"/>
 </a>
 </p>
 
