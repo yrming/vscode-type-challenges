@@ -58,7 +58,7 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
             const treeItem = new QuestionItem(`${question.idx!} - ${question.title!}`, {
                 title: 'Preview Question',
                 command: Commands.PreviewQuestion,
-                arguments: [question.idx]
+                arguments: [question]
             });
             questionItems.push(treeItem);
         });
