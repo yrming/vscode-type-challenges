@@ -1,8 +1,16 @@
 {
   "name": "type-challenges",
+  "preview": true,
   "displayName": "Type Challenges",
-  "description": "Type Challenges in VS Code",
+  "description": "Take Type Challenges in VS Code",
   "version": "0.0.1",
+  "publisher": "YRM",
+  "license": "MIT",
+  "icon": "resources/logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yrming/vscode-type-challenges"
+  },
   "engines": {
     "vscode": "^1.65.0"
   },
@@ -14,12 +22,6 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "type-challenges.helloWorld",
-        "title": "Hello World"
-      }
-    ],
     "viewsContainers": {
       "activitybar": [
         {
