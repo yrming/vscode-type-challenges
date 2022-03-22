@@ -1,7 +1,7 @@
 <br>
 <p align="center">
-<a href="https://github.com/slidevjs/slidev" target="_blank">
-<img src="resources/logo.svg" alt="Slidev" width="280"/>
+<a href="https://github.com/type-challenges/type-challenges" target="_blank">
+<img src="resources/logo.png" alt="Type Challenges" width="280"/>
 </a>
 </p>
 
