@@ -19,6 +19,7 @@ export interface Question {
     readMe?: string
     tags?: string
     difficulty?: string
+    info?: any
     template?: string
     testCases?: string
     _original?: string
