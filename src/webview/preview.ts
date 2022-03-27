@@ -1,7 +1,5 @@
-import { marked } from 'marked';
 
-export function getHTMLContent(title: string = '', docStr: string = '') {
-    const markdownStr = marked(docStr);
+export function getHTMLContent(title: string = '', markdownStr: string) {
     const html = `
         <!doctype html>
         <html>
@@ -73,7 +71,41 @@ export function getHTMLContent(title: string = '', docStr: string = '') {
                         ${markdownStr}
                     </div>
                 </div>
-            </body>
+                <script>
+                    const vscode = acquireVsCodeApi();
+
+                    const $readmeENElem = document.querySelector('a[href="./README.md"]');
+                    $readmeENElem && $readmeENElem.addEventListener('click', function() {
+                        vscode.postMessage({
+                            command: 'switchReadMe',
+                            text: 'readMe'
+                        })
+                    })
+
+                    const $readmeZHElem = document.querySelector('a[href="./README.zh-CN.md"]');
+                    $readmeZHElem && $readmeZHElem.addEventListener('click', function() {
+                        vscode.postMessage({
+                            command: 'switchReadMe',
+                            text: 'readMeZh'
+                        })
+                    })
+
+                    const $readmeJAElem = document.querySelector('a[href="./README.ja.md"]');
+                    $readmeJAElem && $readmeJAElem.addEventListener('click', function() {
+                        vscode.postMessage({
+                            command: 'switchReadMe',
+                            text: 'readMeJa'
+                        })
+                    })
+
+                    const $readmeKOElem = document.querySelector('a[href="./README.ko.md"]');
+                    $readmeKOElem && $readmeKOElem.addEventListener('click', function() {
+                        vscode.postMessage({
+                            command: 'switchReadMe',
+                            text: 'readMeKo'
+                        })
+                    })
+                </script>
         </html>
     `;
     return html;

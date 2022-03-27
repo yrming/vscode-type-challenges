@@ -17,6 +17,9 @@ export interface Question {
     idx?: number
     title?: string
     readMe?: string
+    readMeJa?: string
+    readMeKo?: string
+    readMeZh?: string
     tags?: string
     difficulty?: string
     info?: any
