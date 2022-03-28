@@ -105,6 +105,20 @@ export function getHTMLContent(title: string = '', markdownStr: string) {
                             text: 'readMeKo'
                         })
                     })
+
+                    const $relatedElems = document.querySelectorAll('a[href^="https://github.com/type-challenges/type-challenges/blob/master/questions/"]');
+                    $relatedElems.forEach(function($relatedElem) {
+                        $relatedElem && $relatedElem.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const href = $relatedElem.getAttribute('href');
+                            const title = href.replace('https://github.com/type-challenges/type-challenges/blob/master/questions/', '').replace('/README.md', '');
+                            vscode.postMessage({
+                                command: 'previewRelated',
+                                text: title
+                            })
+                        })
+                    })
                 </script>
         </html>
     `;
