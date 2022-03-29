@@ -27,11 +27,13 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
                     return this.getAllQuestionItems();
                 } else if (element.label === Category.Difficulty) {
                     return this.getDifficultyItems();
+                } else if (element.label === Category.Tag) {
+                    return this.getTagItems();
                 }
             } else if (element instanceof DifficultyItem) {
                 return this.getQuestionsItemsByDifficulty(element.label as Difficulty);
             } else if (element instanceof TagItem) {
-                return this.getAllQuestionItems();
+                return this.getQuestionsItemsByTag(element.label);
             }
         } else {
             return this.getCategoryItems();
@@ -39,7 +41,7 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     }
 
     getCategoryItems(): CategoryItem[] {
-        const categoryItems = [new CategoryItem(Category.All), new CategoryItem(Category.Difficulty)];
+        const categoryItems = [new CategoryItem(Category.All), new CategoryItem(Category.Difficulty), new CategoryItem(Category.Tag)];
         return categoryItems;
     }
 
@@ -49,7 +51,20 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     }
 
     getTagItems(): TagItem[] {
-        return [];
+        const tagItems: TagItem[] = [];
+        const set = new Set<string>();
+        for (const q of this.allQuestions) {
+            const tags = q.info?.tags || [];
+            for (const tag of tags) {
+                set.add(tag as string);
+            };
+        }
+        const sortTags = Array.from(set).sort();
+        sortTags.forEach(tag => {
+            const tagItem = new TagItem(tag);
+            tagItems.push(tagItem);
+        });
+        return tagItems;
     }
 
     genQuestionsItems(questions: Question[]): QuestionItem[] {
@@ -71,6 +86,11 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
 
     getQuestionsItemsByDifficulty(difficulty: Difficulty): QuestionItem[] {
         const questions = this.allQuestions.filter(item => item.difficulty === difficulty.toLowerCase());
+        return this.genQuestionsItems(questions);
+    }
+
+    getQuestionsItemsByTag(tag: string): QuestionItem[] {
+        const questions = this.allQuestions.filter(item => !!item.info.tags?.includes(tag));
         return this.genQuestionsItems(questions);
     }
 }

@@ -28,6 +28,20 @@ export interface Question {
     _original?: string
 }
 
+export interface QuestionMetaInfo {
+    title: string
+    author: {
+        name: string
+        email: string
+        github: string
+    }
+    tsconfig?: Record<string, any>
+    original_issues: number[]
+    recommended_solutions: number[]
+    tags: string[]
+    related?: string[]
+}
+
 export enum Commands {
     PreviewQuestion = 'typeChallenges.previewQuestion'
 }
