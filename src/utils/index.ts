@@ -67,8 +67,7 @@ export function loadInfo(s: string): any {
           .split(',')
           .map((i: string) => i.trim())
           .filter(Boolean);
-      }
-      else {
+      } else {
         object[key] = undefined;
       }
     }

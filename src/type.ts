@@ -2,7 +2,8 @@
 export enum Category {
     All = 'All',
     Difficulty = 'Difficulty',
-    Tag = 'Tag'
+    Tag = 'Tag',
+    Author = 'Author'
 }
 
 export enum Difficulty {
@@ -22,7 +23,7 @@ export interface Question {
     readMeZh?: string
     tags?: string
     difficulty?: string
-    info?: any
+    info?: QuestionMetaInfo
     template?: string
     testCases?: string
     _original?: string
@@ -30,16 +31,18 @@ export interface Question {
 
 export interface QuestionMetaInfo {
     title: string
-    author: {
-        name: string
-        email: string
-        github: string
-    }
+    author: Author
     tsconfig?: Record<string, any>
     original_issues: number[]
     recommended_solutions: number[]
     tags: string[]
     related?: string[]
+}
+
+export interface Author {
+    name?: string
+    email?: string
+    github?: string
 }
 
 export enum Commands {

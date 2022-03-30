@@ -1,10 +1,11 @@
-import { Event, EventEmitter, ProviderResult, TreeDataProvider, TreeItemCollapsibleState } from 'vscode';
+import { Event, EventEmitter, ProviderResult, TreeDataProvider } from 'vscode';
 import { CategoryItem } from './CategoryItem';
 import { DifficultyItem } from './DifficultyItem';
 import { TagItem } from './TagItem';
+import { AuthorItem } from './AuthorItem';
 import { QuestionItem } from './QuestionItem';
 import { getAllQuestions } from '../../utils';
-import { Category, Commands, Difficulty, Question } from '../../type';
+import { Category, Commands, Difficulty, Question, Author } from '../../type';
 
 export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     private _onDidChangeTreeData: EventEmitter<QuestionItem | undefined | void> = new EventEmitter<QuestionItem | undefined | void>();
@@ -16,11 +17,11 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
         this.allQuestions = getAllQuestions();
     }
 
-    getTreeItem(element: CategoryItem | DifficultyItem | TagItem): QuestionItem | Thenable<CategoryItem | DifficultyItem | TagItem | QuestionItem> {
+    getTreeItem(element: CategoryItem | DifficultyItem | TagItem | AuthorItem): QuestionItem | Thenable<CategoryItem | DifficultyItem | TagItem | AuthorItem | QuestionItem> {
         return element;
     }
 
-    getChildren(element?: CategoryItem | DifficultyItem | TagItem): ProviderResult<CategoryItem[] | DifficultyItem[] | TagItem[] | QuestionItem[]> {
+    getChildren(element?: CategoryItem | DifficultyItem | TagItem | AuthorItem): ProviderResult<CategoryItem[] | DifficultyItem[] | TagItem[] | AuthorItem[] | QuestionItem[]> {
         if (element) {
             if (element instanceof CategoryItem) {
                 if (element.label === Category.All) {
@@ -29,11 +30,15 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
                     return this.getDifficultyItems();
                 } else if (element.label === Category.Tag) {
                     return this.getTagItems();
+                } else if (element.label === Category.Author) {
+                    return this.getAuthorItems();
                 }
             } else if (element instanceof DifficultyItem) {
                 return this.getQuestionsItemsByDifficulty(element.label as Difficulty);
             } else if (element instanceof TagItem) {
                 return this.getQuestionsItemsByTag(element.label);
+            } else if (element instanceof AuthorItem) {
+                return this.getQuestionsItemsByAuthor(element.label);
             }
         } else {
             return this.getCategoryItems();
@@ -41,7 +46,7 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     }
 
     getCategoryItems(): CategoryItem[] {
-        const categoryItems = [new CategoryItem(Category.All), new CategoryItem(Category.Difficulty), new CategoryItem(Category.Tag)];
+        const categoryItems = [new CategoryItem(Category.All), new CategoryItem(Category.Difficulty), new CategoryItem(Category.Tag), new CategoryItem(Category.Author)];
         return categoryItems;
     }
 
@@ -67,6 +72,22 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
         return tagItems;
     }
 
+    getAuthorItems(): AuthorItem[] {
+        const authorItems: AuthorItem[] = [];
+        const set = new Set<string>();
+        for (const q of this.allQuestions) {
+            const author = q.info?.author;
+            const name = author?.name || author?.github;
+            set.add(name as string);
+        }
+        const sortAuthors = Array.from(set).sort();
+        sortAuthors.forEach(author => {
+            const authorItem = new AuthorItem(author);
+            authorItems.push(authorItem);
+        });
+        return authorItems;
+    }
+
     genQuestionsItems(questions: Question[]): QuestionItem[] {
         const questionItems: QuestionItem[] = [];
         questions.forEach(question => {
@@ -90,7 +111,12 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     }
 
     getQuestionsItemsByTag(tag: string): QuestionItem[] {
-        const questions = this.allQuestions.filter(item => !!item.info.tags?.includes(tag));
+        const questions = this.allQuestions.filter(item => !!item.info!.tags?.includes(tag));
+        return this.genQuestionsItems(questions);
+    }
+
+    getQuestionsItemsByAuthor(author: string): QuestionItem[] {
+        const questions = this.allQuestions.filter(item => item.info!.author?.name === author || item.info!.author?.github === author);
         return this.genQuestionsItems(questions);
     }
 }
