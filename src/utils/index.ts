@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as YAML from 'js-yaml';
 import type { Question } from '../type';
 
-const rootPath = path.join(__dirname, '..', '..' ,'resources', 'data');
+const rootPath = path.join(__dirname, '..', '..' ,'resources', 'questions');
 
 export function getAllQuestions(): Question[] {
     const result: Question[] = [];
