@@ -1,6 +1,5 @@
-
 export function getHTMLContent(title: string = '', markdownStr: string) {
-    const html = `
+  const html = `
         <!doctype html>
         <html>
             <head>
@@ -121,6 +120,6 @@ export function getHTMLContent(title: string = '', markdownStr: string) {
                     })
                 </script>
         </html>
-    `;
-    return html;
+    `
+  return html
 }
