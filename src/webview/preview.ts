@@ -62,7 +62,7 @@ export function getHTMLContent(title: string = '', markdownStr: string) {
                       --color-attention-subtle: rgba(187,128,9,0.15);
                       --color-danger-fg: #f85149;
                     }
-                  }                  
+                  }
             </style>
             <body>
                 <div class="container">
@@ -116,6 +116,13 @@ export function getHTMLContent(title: string = '', markdownStr: string) {
                                 command: 'previewRelated',
                                 text: title
                             })
+                        })
+                    })
+
+                    const $backElem = document.querySelector('a[href="../../README.md"]');
+                    $backElem && $backElem.addEventListener('click', function() {
+                        vscode.postMessage({
+                            command: 'back'
                         })
                     })
                 </script>

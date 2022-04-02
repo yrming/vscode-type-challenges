@@ -42,6 +42,10 @@ const _createWebviewPanel = (question: Question) => {
           return
         }
         _createWebviewPanel(relatedQuestion)
+        break
+      case 'back':
+        commands.executeCommand('workbench.action.closeActiveEditor')
+        break
       default:
         break
     }
