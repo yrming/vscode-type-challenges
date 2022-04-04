@@ -38,7 +38,21 @@
           "name": "Type Challenges"
         }
       ]
-    }
+    },
+    "configuration": [
+      {
+        "title": "Type Challenges",
+        "type": "object",
+        "properties": {
+          "typeChallenges.workspaceFolder": {
+            "type": "string",
+            "scope": "application",
+            "description": "The path of the workspace folder to store type challenges.",
+            "default": ""
+          }
+        }
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
