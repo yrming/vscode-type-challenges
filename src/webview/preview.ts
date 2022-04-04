@@ -1,4 +1,4 @@
-export function getHTMLContent(title: string = '', markdownStr: string) {
+export function getPreviewHTMLContent(title: string = '', markdownStr: string) {
   const html = `
         <!doctype html>
         <html>
@@ -125,6 +125,17 @@ export function getHTMLContent(title: string = '', markdownStr: string) {
                             command: 'back'
                         })
                     })
+
+                    const $takeElem = document.querySelector('a[href*="/play"]');
+                    $takeElem && $takeElem.addEventListener('click', function(e) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const idx = ${title.split('-')[0].trim()}
+                      vscode.postMessage({
+                          command: 'takeChallenge',
+                          text: idx
+                      })
+                  })
                 </script>
         </html>
     `
