@@ -12,5 +12,5 @@
     // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
     // "noUnusedParameters": true,  /* Report errors on unused parameters. */
   },
-  "exclude": ["**/template.ts", "**/test-cases.ts"]
+  "exclude": ["**/template.ts", "**/test-cases.ts", "**/type-challenges-utils.ts"]
 }

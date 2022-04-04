@@ -1,4 +1,4 @@
-export function getHTMLContent(title: string = '', markdownStr: string) {
+export function getHTMLContent(title: string = '', markdownStr: string, url: string) {
   const html = `
         <!doctype html>
         <html>
@@ -63,6 +63,23 @@ export function getHTMLContent(title: string = '', markdownStr: string) {
                       --color-danger-fg: #f85149;
                     }
                   }
+                #solve {
+                    position: fixed;
+                    bottom: 1rem;
+                    right: 1rem;
+                    border: 0;
+                    margin: 1rem 0;
+                    padding: 0.2rem 1rem;
+                    color: white;
+                    background-color: var(--vscode-button-background);
+                }
+                #solve:hover {
+                    background-color: var(--vscode-button-hoverBackground);
+                    cursor: pointer;
+                }
+                #solve:active {
+                    border: 0;
+                }
             </style>
             <body>
                 <div class="container">
@@ -70,6 +87,7 @@ export function getHTMLContent(title: string = '', markdownStr: string) {
                         ${markdownStr}
                     </div>
                 </div>
+                <button id="solve">Code Now</button>
                 <script>
                     const vscode = acquireVsCodeApi();
 
@@ -125,6 +143,15 @@ export function getHTMLContent(title: string = '', markdownStr: string) {
                             command: 'back'
                         })
                     })
+
+                    const button = document.getElementById('solve');
+                    button.addEventListener('click', function () { 
+                        vscode.postMessage({
+                            command: 'ShowProblem',
+                            title: '${title}',
+                            url: '${url}',
+                        })
+                    });
                 </script>
         </html>
     `

@@ -2,6 +2,10 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as YAML from 'js-yaml'
 import type { Question } from '../type'
+import * as fse from 'fs-extra'
+import { homedir } from 'node:os'
+
+export const defaultWorkSpace = `${homedir()}/.type-challenges`;
 
 const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
 
@@ -73,4 +77,16 @@ export function loadInfo(s: string): any {
   }
 
   return object
+}
+
+export const helperFileName = 'type-challenges-utils.ts'
+
+export async function generateTsHelp() { 
+  const filePath = path.resolve(defaultWorkSpace, helperFileName);
+  const exists = await fse.pathExists(filePath);
+
+  if (!exists) {
+    const oriFile = path.join(__dirname, '..', '..', 'resources', helperFileName)
+    await fse.copy(oriFile, filePath)
+  }
 }
