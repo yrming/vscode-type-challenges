@@ -47,7 +47,7 @@
           "typeChallenges.workspaceFolder": {
             "type": "string",
             "scope": "application",
-            "description": "The path of the workspace folder to store type challenges.",
+            "description": "The path of the workspace folder to save Type Challenges",
             "default": ""
           }
         }
@@ -64,6 +64,7 @@
     "prettier": "prettier --write ."
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
     "@types/glob": "^7.2.0",
     "@types/mocha": "^9.1.0",
     "@types/node": "14.x",
@@ -78,6 +79,7 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
+    "fs-extra": "^10.0.1",
     "js-yaml": "^4.1.0",
     "marked": "^4.0.12"
   }
