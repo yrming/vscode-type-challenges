@@ -4,7 +4,7 @@ import { DifficultyItem } from './DifficultyItem'
 import { TagItem } from './TagItem'
 import { AuthorItem } from './AuthorItem'
 import { QuestionItem } from './QuestionItem'
-import { getAllQuestions } from '../../utils'
+import { getAllQuestions } from '../../utils/questions'
 import { Category, Commands, Difficulty, Question, Author } from '../../type'
 
 export class QuestionsProvider implements TreeDataProvider<QuestionItem> {

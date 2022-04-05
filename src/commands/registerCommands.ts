@@ -1,8 +1,11 @@
-import { ExtensionContext, commands, window, ViewColumn } from 'vscode'
+import * as fse from 'fs-extra'
+import { ExtensionContext, commands, window, ViewColumn, Uri } from 'vscode'
 import { marked } from 'marked'
+import * as path from 'path'
 import { Commands, Question } from '../type'
 import { getPreviewHTMLContent } from '../webview/preview'
-import { getAllQuestions } from '../utils'
+import { getAllQuestions } from '../utils/questions'
+import selectWorkspaceFolder from '../utils/settings'
 
 export async function registerCommands(context: ExtensionContext): Promise<void> {
   commands.registerCommand(Commands.PreviewQuestion, (question) => {
@@ -54,10 +57,34 @@ const _createPreviewWebviewPanel = (question: Question) => {
         if (!takeQuestion) {
           return
         }
-        // TODO: take challenge
+        takeChallenge(takeQuestion)
         break
       default:
         break
     }
   })
+}
+
+async function takeChallenge(question: Question) {
+  const workspaceFolder: string = await selectWorkspaceFolder()
+  if (!workspaceFolder) {
+    return
+  }
+
+  const testUtilsPath = path.join(workspaceFolder, 'test-utils.ts')
+  if (!(await fse.pathExists(testUtilsPath))) {
+    await fse.copy(path.join(__dirname, '../../src/utils/test.ts'), testUtilsPath)
+  }
+  const fileName = `${question._original}.ts`
+  let finalPath: string = path.join(workspaceFolder, fileName)
+  if (!(await fse.pathExists(finalPath))) {
+    await fse.createFile(finalPath)
+
+    const testCasesCommentStart = `// ============= Test Cases =============`
+    const yourCodeCommentStart = `// ============= Your Code Here =============`
+    const testCasesCode = question.testCases?.replace('@type-challenges/utils', './test-utils')
+    const codeTemplate = `${testCasesCommentStart}\r\n${testCasesCode}\r\n\r\n${yourCodeCommentStart}\r\n${question.template}`
+    await fse.writeFile(finalPath, codeTemplate)
+  }
+  window.showTextDocument(Uri.file(finalPath), { preview: false, viewColumn: ViewColumn.One })
 }

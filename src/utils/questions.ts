@@ -18,6 +18,18 @@ export function getAllQuestions(): Question[] {
       question._original = folderName
     }
 
+    const templatePath = path.join(rootPath, folderName, 'template.ts')
+    if (fs.existsSync(templatePath)) {
+      const template = fs.readFileSync(templatePath).toString()
+      question.template = template
+    }
+
+    const testCasesPath = path.join(rootPath, folderName, 'test-cases.ts')
+    if (fs.existsSync(testCasesPath)) {
+      const testCases = fs.readFileSync(testCasesPath).toString()
+      question.testCases = testCases
+    }
+
     const infoPath = path.join(rootPath, folderName, 'info.yml')
     if (fs.existsSync(infoPath)) {
       const info = loadInfo(fs.readFileSync(infoPath).toString())
