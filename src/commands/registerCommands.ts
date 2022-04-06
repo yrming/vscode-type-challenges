@@ -1,11 +1,12 @@
-import * as fse from 'fs-extra'
 import { ExtensionContext, commands, window, ViewColumn, Uri } from 'vscode'
 import { marked } from 'marked'
 import * as path from 'path'
+import * as fse from 'fs-extra'
 import { Commands, Question } from '../type'
 import { getPreviewHTMLContent } from '../webview/preview'
 import { getAllQuestions } from '../utils/questions'
 import selectWorkspaceFolder from '../utils/settings'
+import { testUtil } from '../utils/test'
 
 export async function registerCommands(context: ExtensionContext): Promise<void> {
   commands.registerCommand(Commands.PreviewQuestion, (question) => {
@@ -73,13 +74,13 @@ async function takeChallenge(question: Question) {
 
   const testUtilsPath = path.join(workspaceFolder, 'test-utils.ts')
   if (!(await fse.pathExists(testUtilsPath))) {
-    await fse.copy(path.join(__dirname, '../../src/utils/test.ts'), testUtilsPath)
+    await fse.createFile(testUtilsPath)
+    await fse.writeFile(testUtilsPath, testUtil)
   }
   const fileName = `${question._original}.ts`
   let finalPath: string = path.join(workspaceFolder, fileName)
   if (!(await fse.pathExists(finalPath))) {
     await fse.createFile(finalPath)
-
     const testCasesCommentStart = `// ============= Test Cases =============`
     const yourCodeCommentStart = `// ============= Your Code Here =============`
     const testCasesCode = question.testCases?.replace('@type-challenges/utils', './test-utils')

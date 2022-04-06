@@ -2,7 +2,7 @@
 // Copyright (c) Anthony Fu. All rights reserved.
 // Licensed under the MIT license.
 
-export type Expect<T extends true> = T
+export const testUtil = `export type Expect<T extends true> = T
 export type ExpectTrue<T extends true> = T
 export type ExpectFalse<T extends false> = T
 export type IsTrue<T extends true> = T
@@ -33,3 +33,4 @@ export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) ex
 ) => void
   ? I
   : never
+`
