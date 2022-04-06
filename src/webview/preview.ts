@@ -87,7 +87,7 @@ export function getHTMLContent(title: string = '', markdownStr: string, dir: str
                         ${markdownStr}
                     </div>
                 </div>
-                <button id="solve">Code Now</button>
+                <button id="solve">Code Locally</button>
                 <script>
                     const vscode = acquireVsCodeApi();
 
