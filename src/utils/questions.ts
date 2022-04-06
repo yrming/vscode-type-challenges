@@ -18,13 +18,13 @@ export function getAllQuestions(): Question[] {
       question._original = folderName
     }
 
-    const templatePath = path.join(rootPath, folderName, 'template.ts')
+    const templatePath = path.join(rootPath, folderName, 'template.tc')
     if (fs.existsSync(templatePath)) {
       const template = fs.readFileSync(templatePath).toString()
       question.template = template
     }
 
-    const testCasesPath = path.join(rootPath, folderName, 'test-cases.ts')
+    const testCasesPath = path.join(rootPath, folderName, 'test-cases.tc')
     if (fs.existsSync(testCasesPath)) {
       const testCases = fs.readFileSync(testCasesPath).toString()
       question.testCases = testCases
