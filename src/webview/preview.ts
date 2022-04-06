@@ -1,4 +1,4 @@
-export function getHTMLContent(title: string = '', markdownStr: string, url: string) {
+export function getHTMLContent(title: string = '', markdownStr: string, dir: string) {
   const html = `
         <!doctype html>
         <html>
@@ -148,8 +148,7 @@ export function getHTMLContent(title: string = '', markdownStr: string, url: str
                     button.addEventListener('click', function () { 
                         vscode.postMessage({
                             command: 'ShowProblem',
-                            title: '${title}',
-                            url: '${url}',
+                            dir: '${dir}',
                         })
                     });
                 </script>

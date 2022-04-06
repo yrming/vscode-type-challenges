@@ -26,7 +26,7 @@ export interface Question {
   info?: QuestionMetaInfo
   template?: string
   testCases?: string
-  _original?: string
+  _original: string
 }
 
 export interface QuestionMetaInfo {

@@ -7,19 +7,20 @@ import { homedir } from 'node:os'
 
 export const defaultWorkSpace = `${homedir()}/.type-challenges`;
 
-const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
+export const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
 
 export function getAllQuestions(): Question[] {
   const result: Question[] = []
   const questions = fs.readdirSync(rootPath)
   questions.forEach((folderName) => {
-    const question: Question = {}
+    const question: Question = {
+      _original: folderName
+    }
     const reg = /^(\d+)-([\s\S]+?)-([\s\S]+)$/
     const matches = folderName.match(reg)
     if (Array.isArray(matches)) {
       question.idx = parseInt(matches[1])
       question.difficulty = matches[2]
-      question._original = folderName
     }
 
     const infoPath = path.join(rootPath, folderName, 'info.yml')
