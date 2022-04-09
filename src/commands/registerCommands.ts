@@ -1,4 +1,4 @@
-import { ExtensionContext, commands, window, ViewColumn, Uri } from 'vscode'
+import { ExtensionContext, commands, window, ViewColumn, Uri, Selection, Position } from 'vscode'
 import { marked } from 'marked'
 import * as path from 'path'
 import * as fse from 'fs-extra'
@@ -87,5 +87,29 @@ async function takeChallenge(question: Question) {
     const codeTemplate = `${testCasesCommentStart}\r\n${testCasesCode}\r\n\r\n${yourCodeCommentStart}\r\n${question.template}`
     await fse.writeFile(finalPath, codeTemplate)
   }
-  window.showTextDocument(Uri.file(finalPath), { preview: false, viewColumn: ViewColumn.One })
+  const editor = await window.showTextDocument(Uri.file(finalPath), {
+    preview: false,
+    viewColumn: ViewColumn.One
+  })
+
+  const text = editor.document.getText()
+  const lines = text.split('\n')
+  let targetLine = 0
+  lines.forEach((line, index) => {
+    if (question.template!.trim().includes(line.trim())) {
+      let anyIndex = -1
+      if (line.includes('= any')) {
+        anyIndex = line.indexOf('= any')
+      } else if (line.includes(': any')) {
+        anyIndex = line.lastIndexOf(': any')
+      }
+      if (anyIndex > -1) {
+        targetLine = index
+        editor.selection = new Selection(
+          new Position(targetLine, anyIndex + 2),
+          new Position(targetLine, anyIndex + 5)
+        )
+      }
+    }
+  })
 }
