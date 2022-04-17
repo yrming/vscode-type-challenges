@@ -1,4 +1,5 @@
-import { Equal, Expect, ExpectFalse, NotEqual } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils'
+import { ExpectFalse, NotEqual } from '@type-challenges/utils'
 
 interface User {
   name: string
@@ -9,13 +10,13 @@ interface User {
 interface UserPartialName {
   name?: string
   age: number
-  address: string 
+  address: string
 }
 
 interface UserPartialNameAndAge {
   name?: string
   age?: number
-  address: string 
+  address: string
 }
 
 type cases = [

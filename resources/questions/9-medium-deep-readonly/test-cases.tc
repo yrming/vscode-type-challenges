@@ -1,4 +1,4 @@
-import { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils'
 
 type cases = [
   Expect<Equal<DeepReadonly<X>, Expected>>,
@@ -16,8 +16,13 @@ type X = {
           j: 'string'
         }
         k: 'hello'
-      },
-      l: ['hi']
+      }
+      l: [
+        'hi',
+        {
+          m: ['hey']
+        },
+      ]
     }
   }
 }
@@ -34,8 +39,13 @@ type Expected = {
           readonly j: 'string'
         }
         readonly k: 'hello'
-      },
-      readonly l: ['hi']
+      }
+      readonly l: readonly [
+        'hi',
+        {
+          readonly m: readonly ['hey']
+        },
+      ]
     }
   }
 }

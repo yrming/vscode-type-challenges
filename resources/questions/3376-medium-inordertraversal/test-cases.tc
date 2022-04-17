@@ -1,4 +1,5 @@
-import { Equal, Expect, ExpectFalse, NotEqual } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils'
+import { ExpectFalse, NotEqual } from '@type-challenges/utils'
 
 const tree1 = {
   val: 1,
@@ -36,8 +37,8 @@ const tree4 = {
   right: {
     val: 2,
     left: null,
-    right: null
-  }
+    right: null,
+  },
 } as const
 
 type cases = [
