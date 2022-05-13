@@ -49,6 +49,16 @@
             "scope": "application",
             "description": "The path of the workspace folder to save Type Challenges",
             "default": ""
+          },
+          "typeChallenges.defaultLanguage": {
+            "type": "string",
+            "enum": [
+              "zh",
+              "ja",
+              "ko",
+              "en"
+            ],
+            "description": "The default language of Type Challenge"
           }
         }
       }
