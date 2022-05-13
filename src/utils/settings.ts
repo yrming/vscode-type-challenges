@@ -27,6 +27,8 @@ enum OpenOption {
   addToWorkspace = 'Add to workspace'
 }
 
+type LanguageType = 'zh' | 'en' | 'ja' | 'ko'
+
 export default async function selectWorkspaceFolder(): Promise<string> {
   let workspaceFolderSetting: string = getWorkspaceFolder()
   if (workspaceFolderSetting.trim() === '') {
@@ -84,6 +86,10 @@ export default async function selectWorkspaceFolder(): Promise<string> {
 
 export function getWorkspaceFolder(): string {
   return getWorkspaceConfiguration().get<string>('workspaceFolder', '')
+}
+
+export function getDefaultLanguage(): LanguageType {
+  return getWorkspaceConfiguration().get<LanguageType>('defaultLanguage', 'en')
 }
 
 export function getWorkspaceConfiguration(): WorkspaceConfiguration {

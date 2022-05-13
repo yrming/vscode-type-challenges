@@ -5,7 +5,7 @@ import * as fse from 'fs-extra'
 import { Commands, Question } from '../type'
 import { getPreviewHTMLContent } from '../webview/preview'
 import { getAllQuestions } from '../utils/questions'
-import selectWorkspaceFolder from '../utils/settings'
+import selectWorkspaceFolder, { getDefaultLanguage } from '../utils/settings'
 import { testUtil } from '../utils/test'
 
 export async function registerCommands(context: ExtensionContext): Promise<void> {
@@ -23,10 +23,23 @@ const _createPreviewWebviewPanel = (question: Question) => {
       enableScripts: true
     }
   )
-  panel.webview.html = getPreviewHTMLContent(
-    `${question.idx} - ${question.title}`,
-    marked(question.readMe)
-  )
+  const defaultLanguage = getDefaultLanguage()
+  let readMe: string | undefined
+  switch (defaultLanguage) {
+    case 'zh':
+      readMe = question.readMeZh
+      break
+    case 'ja':
+      readMe = question.readMeJa
+      break
+    case 'ko':
+      readMe = question.readMeKo
+      break
+    default:
+      readMe = question.readMe
+      break
+  }
+  panel.webview.html = getPreviewHTMLContent(`${question.idx} - ${question.title}`, marked(readMe))
   panel.webview.onDidReceiveMessage((message) => {
     const allQuestions = getAllQuestions()
     switch (message.command) {
