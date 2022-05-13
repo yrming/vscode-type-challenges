@@ -1,4 +1,13 @@
-import { ExtensionContext, commands, window, ViewColumn, Uri, Selection, Position } from 'vscode'
+import {
+  ExtensionContext,
+  commands,
+  window,
+  ViewColumn,
+  Uri,
+  Selection,
+  Position,
+  WebviewPanel
+} from 'vscode'
 import { marked } from 'marked'
 import * as path from 'path'
 import * as fse from 'fs-extra'
@@ -14,16 +23,21 @@ export async function registerCommands(context: ExtensionContext): Promise<void>
   })
 }
 
+const webviewPanels: Map<string, WebviewPanel> = new Map()
+
 const _createPreviewWebviewPanel = (question: Question) => {
-  const panel = window.createWebviewPanel(
-    'preview',
-    `${question.idx} - ${question.title}`,
-    ViewColumn.One,
-    {
-      enableScripts: true
-    }
-  )
+  const viewType = 'typeChallenges.preview'
+  const panelTitle = `${question.idx} - ${question.title}`
   const defaultLanguage = getDefaultLanguage()
+  const webviewPanelKey = `${viewType}.${panelTitle}.${defaultLanguage}`
+  if (webviewPanels.has(webviewPanelKey)) {
+    webviewPanels.get(webviewPanelKey)!.reveal()
+    return
+  }
+  const panel = window.createWebviewPanel(viewType, panelTitle, ViewColumn.One, {
+    enableScripts: true
+  })
+  webviewPanels.set(webviewPanelKey, panel)
   let readMe: string | undefined
   switch (defaultLanguage) {
     case 'zh':
@@ -39,16 +53,13 @@ const _createPreviewWebviewPanel = (question: Question) => {
       readMe = question.readMe
       break
   }
-  panel.webview.html = getPreviewHTMLContent(`${question.idx} - ${question.title}`, marked(readMe))
+  panel.webview.html = getPreviewHTMLContent(panelTitle, marked(readMe))
   panel.webview.onDidReceiveMessage((message) => {
     const allQuestions = getAllQuestions()
     switch (message.command) {
       case 'switchReadMe':
         const key = message.text as keyof Question
-        panel.webview.html = getPreviewHTMLContent(
-          `${question.idx} - ${question.title}`,
-          marked(question[key])
-        )
+        panel.webview.html = getPreviewHTMLContent(panelTitle, marked(question[key]))
         break
       case 'previewRelated':
         if (!message.text) {
@@ -76,6 +87,9 @@ const _createPreviewWebviewPanel = (question: Question) => {
       default:
         break
     }
+  })
+  panel.onDidDispose(() => {
+    webviewPanels.delete(webviewPanelKey)
   })
 }
 
