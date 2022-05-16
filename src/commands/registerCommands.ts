@@ -53,6 +53,9 @@ const _createPreviewWebviewPanel = (question: Question) => {
       readMe = question.readMe
       break
   }
+  if (!readMe) {
+    readMe = question.readMe
+  }
   panel.webview.html = getPreviewHTMLContent(panelTitle, marked(readMe))
   panel.webview.onDidReceiveMessage((message) => {
     const allQuestions = getAllQuestions()
