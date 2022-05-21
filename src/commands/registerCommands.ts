@@ -113,7 +113,7 @@ async function takeChallenge(question: Question) {
     await fse.createFile(finalPath)
     const testCasesCommentStart = `// ============= Test Cases =============`
     const yourCodeCommentStart = `// ============= Your Code Here =============`
-    const testCasesCode = question.testCases?.replace('@type-challenges/utils', './test-utils')
+    const testCasesCode = question.testCases?.replace(/@type-challenges\/utils/g, './test-utils')
     const codeTemplate = `${testCasesCommentStart}\r\n${testCasesCode}\r\n\r\n${yourCodeCommentStart}\r\n${question.template}`
     await fse.writeFile(finalPath, codeTemplate)
   }
