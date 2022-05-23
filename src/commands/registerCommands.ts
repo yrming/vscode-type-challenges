@@ -11,6 +11,7 @@ import {
 import { marked } from 'marked'
 import * as path from 'path'
 import * as fse from 'fs-extra'
+import hljs from 'highlight.js'
 import { Commands, Question } from '../type'
 import { getPreviewHTMLContent } from '../webview/preview'
 import { getAllQuestions } from '../utils/questions'
@@ -56,6 +57,11 @@ const _createPreviewWebviewPanel = (question: Question) => {
   if (!readMe) {
     readMe = question.readMe
   }
+  marked.setOptions({
+    highlight: function (code: any) {
+      return hljs.highlightAuto(code).value
+    }
+  })
   panel.webview.html = getPreviewHTMLContent(panelTitle, marked(readMe))
   panel.webview.onDidReceiveMessage((message) => {
     const allQuestions = getAllQuestions()
