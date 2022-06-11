@@ -3,7 +3,6 @@
 
 import * as os from 'os'
 import * as path from 'path'
-import * as fse from 'fs-extra'
 import {
   workspace,
   WorkspaceConfiguration,
@@ -12,19 +11,11 @@ import {
   ConfigurationTarget,
   OpenDialogOptions,
   WorkspaceFolder,
-  QuickPickItem,
-  commands
+  QuickPickItem
 } from 'vscode'
 
 interface IQuickItemEx<T> extends QuickPickItem {
   value: T
-}
-
-enum OpenOption {
-  justOpenFile = 'Just open the problem file',
-  openInCurrentWindow = 'Open in current window',
-  openInNewWindow = 'Open in new window',
-  addToWorkspace = 'Add to workspace'
 }
 
 type LanguageType = 'zh' | 'en' | 'ja' | 'ko'
@@ -38,48 +29,6 @@ export default async function selectWorkspaceFolder(): Promise<string> {
       return workspaceFolderSetting
     }
   }
-
-  // let needAsk: boolean = true
-  // await fse.ensureDir(workspaceFolderSetting)
-  // for (const folder of workspace.workspaceFolders || []) {
-  //   if (isSubFolder(folder.uri.fsPath, workspaceFolderSetting)) {
-  //     needAsk = false
-  //   }
-  // }
-
-  // if (needAsk) {
-  //   const choice: string | undefined = await window.showQuickPick(
-  //     [
-  //       OpenOption.justOpenFile,
-  //       OpenOption.openInCurrentWindow,
-  //       OpenOption.openInNewWindow,
-  //       OpenOption.addToWorkspace
-  //     ],
-  //     {
-  //       placeHolder:
-  //         'The Type Challenges workspace folder is not opened in VS Code, would you like to open it?'
-  //     }
-  //   )
-
-  //   // Todo: generate file first
-  //   switch (choice) {
-  //     case OpenOption.justOpenFile:
-  //       return workspaceFolderSetting
-  //     case OpenOption.openInCurrentWindow:
-  //       await commands.executeCommand('vscode.openFolder', Uri.file(workspaceFolderSetting), false)
-  //       return ''
-  //     case OpenOption.openInNewWindow:
-  //       await commands.executeCommand('vscode.openFolder', Uri.file(workspaceFolderSetting), true)
-  //       return ''
-  //     case OpenOption.addToWorkspace:
-  //       workspace.updateWorkspaceFolders(workspace.workspaceFolders?.length ?? 0, 0, {
-  //         uri: Uri.file(workspaceFolderSetting)
-  //       })
-  //       break
-  //     default:
-  //       return ''
-  //   }
-  // }
 
   return workspaceFolderSetting
 }
