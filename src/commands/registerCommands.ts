@@ -63,8 +63,8 @@ const _createPreviewWebviewPanel = (question: Question) => {
     }
   })
   panel.webview.html = getPreviewHTMLContent(panelTitle, marked(readMe))
-  panel.webview.onDidReceiveMessage((message) => {
-    const allQuestions = getAllQuestions()
+  panel.webview.onDidReceiveMessage(async (message) => {
+    const allQuestions = await getAllQuestions()
     switch (message.command) {
       case 'switchReadMe':
         const key = message.text as keyof Question

@@ -1,4 +1,5 @@
 import { Event, EventEmitter, ProviderResult, TreeDataProvider } from 'vscode'
+import * as path from 'path'
 import { CategoryItem } from './CategoryItem'
 import { DifficultyItem } from './DifficultyItem'
 import { TagItem } from './TagItem'
@@ -17,7 +18,11 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
   private allQuestions: Question[] = []
 
   constructor() {
-    this.allQuestions = getAllQuestions()
+    this.getData()
+  }
+
+  async getData() {
+    this.allQuestions = await getAllQuestions()
   }
 
   getTreeItem(
@@ -109,14 +114,34 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
   genQuestionsItems(questions: Question[]): QuestionItem[] {
     const questionItems: QuestionItem[] = []
     questions.forEach((question) => {
-      const treeItem = new QuestionItem(`${question.idx!} - ${question.title!}`, {
-        title: 'Preview Question',
-        command: Commands.PreviewQuestion,
-        arguments: [question]
-      })
+      const treeItem = new QuestionItem(
+        `${question.idx!} - ${question.title!}`,
+        {
+          title: 'Preview Question',
+          command: Commands.PreviewQuestion,
+          arguments: [question]
+        },
+        this.getStatusIcon(question._status)
+      )
       questionItems.push(treeItem)
     })
     return questionItems
+  }
+
+  getStatusIcon(status: string | undefined): string {
+    const completeIconPath = path.join(__dirname, '..', '..', '..', 'resources', 'complete.svg')
+    const errorIconPath = path.join(__dirname, '..', '..', '..', 'resources', 'error.svg')
+    const todoIconPath = path.join(__dirname, '..', '..', '..', 'resources', 'todo.svg')
+    switch (status) {
+      case 'complete':
+        return completeIconPath
+      case 'error':
+        return errorIconPath
+      case 'todo':
+        return todoIconPath
+      default:
+        return todoIconPath
+    }
   }
 
   getAllQuestionItems(): QuestionItem[] {

@@ -1,11 +1,15 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import * as cp from 'child_process'
 import * as YAML from 'js-yaml'
 import type { Question } from '../type'
+import { getWorkspaceFolder } from './settings'
 
 const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
 
-export function getAllQuestions(): Question[] {
+export async function getAllQuestions(): Promise<Question[]> {
+  const localQuestions = getLocalQuestions()
+  const localErrorQuestions = await getLocalErrorQuestions()
   const result: Question[] = []
   const questions = fs.readdirSync(rootPath)
   questions.forEach((folderName) => {
@@ -16,6 +20,14 @@ export function getAllQuestions(): Question[] {
       question.idx = parseInt(matches[1])
       question.difficulty = matches[2]
       question._original = folderName
+      question._status = 'todo'
+      if (localQuestions.includes(`${folderName}.ts`)) {
+        if (localErrorQuestions.find((errorMsg) => errorMsg.includes(folderName))) {
+          question._status = 'error'
+        } else {
+          question._status = 'complete'
+        }
+      }
     }
 
     const templatePath = path.join(rootPath, folderName, 'template.tc')
@@ -85,4 +97,51 @@ export function loadInfo(s: string): any {
   }
 
   return object
+}
+
+function exec(
+  command: string,
+  options: cp.ExecOptions
+): Promise<{ stdout: string; stderr: string }> {
+  return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
+    cp.exec(command, options, (error, stdout, stderr) => {
+      if (error) {
+        reject({ error, stdout, stderr })
+      }
+      resolve({ stdout, stderr })
+    })
+  })
+}
+
+async function getLocalErrorQuestions(): Promise<string[]> {
+  let errorQuestions: string[] = []
+  const workspaceFolderSetting = getWorkspaceFolder()
+  if (!workspaceFolderSetting) {
+    return errorQuestions
+  }
+  try {
+    await exec('tsc *.ts --noEmit', { cwd: workspaceFolderSetting })
+  } catch ({ error, stdout, stderr }) {
+    if (stdout) {
+      const lines = (stdout as string).split(/\r{0,1}\n/)
+      return lines
+    }
+  }
+  return errorQuestions
+}
+
+function getLocalQuestions(): string[] {
+  let localQuestions: string[] = []
+  const workspaceFolderSetting = getWorkspaceFolder()
+  if (!workspaceFolderSetting) {
+    return localQuestions
+  }
+  const questions = fs.readdirSync(workspaceFolderSetting)
+  const reg = /^(\d+)-([\s\S]+?)-([\s\S]+)$/
+  localQuestions = questions
+    .filter((fileName) => reg.test(fileName))
+    .map((fileName) => {
+      return fileName
+    })
+  return localQuestions
 }

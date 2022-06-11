@@ -27,6 +27,7 @@ export interface Question {
   template?: string
   testCases?: string
   _original?: string
+  _status?: 'complete' | 'error' | 'todo'
 }
 
 export interface QuestionMetaInfo {
