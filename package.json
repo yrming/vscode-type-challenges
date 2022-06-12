@@ -39,6 +39,22 @@
         }
       ]
     },
+    "menus": {
+      "view/title": [
+        {
+          "command": "typeChallenges.refresh",
+          "group": "navigation",
+          "when": "view == typeChallenges.questions"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "typeChallenges.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      }
+    ],
     "configuration": [
       {
         "title": "Type Challenges",

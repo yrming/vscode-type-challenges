@@ -1,4 +1,4 @@
-import { Event, EventEmitter, ProviderResult, TreeDataProvider } from 'vscode'
+import { Event, EventEmitter, ProviderResult, TreeDataProvider, commands } from 'vscode'
 import * as path from 'path'
 import { CategoryItem } from './CategoryItem'
 import { DifficultyItem } from './DifficultyItem'
@@ -19,10 +19,19 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
 
   constructor() {
     this.getData()
+
+    commands.registerCommand('typeChallenges.refresh', () => {
+      this.refresh()
+    })
   }
 
   async getData() {
     this.allQuestions = await getAllQuestions()
+  }
+
+  async refresh(): Promise<void> {
+    await this.getData()
+    this._onDidChangeTreeData.fire()
   }
 
   getTreeItem(
