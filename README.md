@@ -15,7 +15,11 @@ Take Type Challenges in VS Code
 
 ## Features
 
-- View Type Challenges in the side panel
+- View challenges in the side panel
+- View challenges by difficulty/tag/author
+- Take the challenge directly in VS Code
+- Show the status of each challenge
+- Dark/Light mode
 
 <p align="center">
 <img width="800" src="resources/snapshot.png">
