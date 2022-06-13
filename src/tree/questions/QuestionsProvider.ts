@@ -17,8 +17,8 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
 
   private allQuestions: Question[] = []
 
-  constructor() {
-    this.getData()
+  constructor(questions: Question[]) {
+    this.allQuestions = questions
 
     commands.registerCommand('typeChallenges.refresh', () => {
       this.refresh()
