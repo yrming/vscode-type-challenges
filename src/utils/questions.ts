@@ -116,7 +116,7 @@ function exec(
 async function getLocalErrorQuestions(): Promise<string[]> {
   let errorQuestions: string[] = []
   const workspaceFolderSetting = getWorkspaceFolder()
-  if (!workspaceFolderSetting) {
+  if (!workspaceFolderSetting || !fs.existsSync(workspaceFolderSetting)) {
     return errorQuestions
   }
   try {
@@ -133,7 +133,7 @@ async function getLocalErrorQuestions(): Promise<string[]> {
 function getLocalQuestions(): string[] {
   let localQuestions: string[] = []
   const workspaceFolderSetting = getWorkspaceFolder()
-  if (!workspaceFolderSetting) {
+  if (!workspaceFolderSetting || !fs.existsSync(workspaceFolderSetting)) {
     return localQuestions
   }
   const questions = fs.readdirSync(workspaceFolderSetting)
