@@ -6,7 +6,14 @@ import { TagItem } from './TagItem'
 import { AuthorItem } from './AuthorItem'
 import { QuestionItem } from './QuestionItem'
 import { getAllQuestions } from '../../utils/questions'
-import { Category, Commands, Difficulty, Question, Author } from '../../type'
+import {
+  Category,
+  Commands,
+  Question,
+  TagMetaInfo,
+  AuthorMetaInfo,
+  DifficultyMetaInfo
+} from '../../type'
 
 export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
   private _onDidChangeTreeData: EventEmitter<QuestionItem | undefined | void> = new EventEmitter<
@@ -16,10 +23,20 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     this._onDidChangeTreeData.event
 
   private allQuestions: Question[] = []
+  private allDifficultiesInfo: DifficultyMetaInfo[] = []
+  private allTagsInfos: TagMetaInfo[] = []
+  private allAuthorsInfos: AuthorMetaInfo[] = []
 
-  constructor(questions: Question[]) {
+  constructor(
+    questions: Question[],
+    difficultiesInfo: DifficultyMetaInfo[],
+    tagsInfo: TagMetaInfo[],
+    authorsInfo: AuthorMetaInfo[]
+  ) {
     this.allQuestions = questions
-
+    this.allDifficultiesInfo = difficultiesInfo
+    this.allTagsInfos = tagsInfo
+    this.allAuthorsInfos = authorsInfo
     commands.registerCommand('typeChallenges.refresh', () => {
       this.refresh()
     })
@@ -45,21 +62,21 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
   ): ProviderResult<CategoryItem[] | DifficultyItem[] | TagItem[] | AuthorItem[] | QuestionItem[]> {
     if (element) {
       if (element instanceof CategoryItem) {
-        if (element.label === Category.All) {
+        if (element.category === Category.All) {
           return this.getAllQuestionItems()
-        } else if (element.label === Category.Difficulty) {
+        } else if (element.category === Category.Difficulty) {
           return this.getDifficultyItems()
-        } else if (element.label === Category.Tag) {
+        } else if (element.category === Category.Tag) {
           return this.getTagItems()
-        } else if (element.label === Category.Author) {
+        } else if (element.category === Category.Author) {
           return this.getAuthorItems()
         }
       } else if (element instanceof DifficultyItem) {
-        return this.getQuestionsItemsByDifficulty(element.label as Difficulty)
+        return this.getQuestionsItemsByDifficulty(element.difficulty)
       } else if (element instanceof TagItem) {
-        return this.getQuestionsItemsByTag(element.label)
+        return this.getQuestionsItemsByTag(element.tag)
       } else if (element instanceof AuthorItem) {
-        return this.getQuestionsItemsByAuthor(element.label)
+        return this.getQuestionsItemsByAuthor(element.author)
       }
     } else {
       return this.getCategoryItems()
@@ -68,37 +85,33 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
 
   getCategoryItems(): CategoryItem[] {
     const categoryItems = [
-      new CategoryItem(Category.All),
-      new CategoryItem(Category.Difficulty),
-      new CategoryItem(Category.Tag),
-      new CategoryItem(Category.Author)
+      new CategoryItem(`${Category.All} (${this.allQuestions.length})`, Category.All),
+      new CategoryItem(
+        `${Category.Difficulty} (${this.allDifficultiesInfo.length})`,
+        Category.Difficulty
+      ),
+      new CategoryItem(`${Category.Tag} (${this.allTagsInfos.length})`, Category.Tag),
+      new CategoryItem(`${Category.Author} (${this.allAuthorsInfos.length})`, Category.Author)
     ]
     return categoryItems
   }
 
   getDifficultyItems(): DifficultyItem[] {
-    const difficultyItems = [
-      new DifficultyItem(`${Difficulty.Warm}`),
-      new DifficultyItem(`${Difficulty.Easy}`),
-      new DifficultyItem(`${Difficulty.Medium}`),
-      new DifficultyItem(`${Difficulty.Hard}`),
-      new DifficultyItem(`${Difficulty.Extreme}`)
-    ]
+    const difficultyItems: DifficultyItem[] = []
+    this.allDifficultiesInfo.forEach((item) => {
+      const difficultyItem = new DifficultyItem(
+        `${item.difficulty} (${item.count})`,
+        item.difficulty
+      )
+      difficultyItems.push(difficultyItem)
+    })
     return difficultyItems
   }
 
   getTagItems(): TagItem[] {
     const tagItems: TagItem[] = []
-    const set = new Set<string>()
-    for (const q of this.allQuestions) {
-      const tags = q.info?.tags || []
-      for (const tag of tags) {
-        set.add(tag as string)
-      }
-    }
-    const sortTags = Array.from(set).sort()
-    sortTags.forEach((tag) => {
-      const tagItem = new TagItem(tag)
+    this.allTagsInfos.forEach((item) => {
+      const tagItem = new TagItem(`${item.tag} (${item.count})`, item.tag)
       tagItems.push(tagItem)
     })
     return tagItems
@@ -106,15 +119,8 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
 
   getAuthorItems(): AuthorItem[] {
     const authorItems: AuthorItem[] = []
-    const set = new Set<string>()
-    for (const q of this.allQuestions) {
-      const author = q.info?.author
-      const name = author?.name || author?.github
-      set.add(name as string)
-    }
-    const sortAuthors = Array.from(set).sort()
-    sortAuthors.forEach((author) => {
-      const authorItem = new AuthorItem(author)
+    this.allAuthorsInfos.forEach((item) => {
+      const authorItem = new AuthorItem(`${item.author} (${item.count})`, item.author)
       authorItems.push(authorItem)
     })
     return authorItems
@@ -157,7 +163,7 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     return this.genQuestionsItems(this.allQuestions)
   }
 
-  getQuestionsItemsByDifficulty(difficulty: Difficulty): QuestionItem[] {
+  getQuestionsItemsByDifficulty(difficulty: string): QuestionItem[] {
     const questions = this.allQuestions.filter(
       (item) => item.difficulty === difficulty.toLowerCase()
     )

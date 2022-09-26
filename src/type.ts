@@ -49,3 +49,17 @@ export interface Author {
 export enum Commands {
   PreviewQuestion = 'typeChallenges.previewQuestion'
 }
+
+export interface DifficultyMetaInfo {
+  difficulty: string
+  count: number
+}
+export interface TagMetaInfo {
+  tag: string
+  count: number
+}
+
+export interface AuthorMetaInfo {
+  author: string
+  count: number
+}

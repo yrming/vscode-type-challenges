@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as cp from 'child_process'
 import * as YAML from 'js-yaml'
-import type { Question } from '../type'
+import { AuthorMetaInfo, Difficulty, DifficultyMetaInfo, Question, TagMetaInfo } from '../type'
 import { getWorkspaceFolder } from './settings'
 
 const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
@@ -74,6 +74,65 @@ export async function getAllQuestions(): Promise<Question[]> {
 
   result.sort((a, b) => a.idx! - b.idx!)
   return result
+}
+
+export function getAllTags(questions: Question[]): string[] {
+  const set = new Set<string>()
+  for (const q of questions) {
+    const tags = q.info?.tags || []
+    for (const tag of tags) {
+      set.add(tag as string)
+    }
+  }
+  const sortTags = Array.from(set).sort()
+  return sortTags
+}
+
+export function getAllTagsInfo(questions: Question[], tags: string[]): TagMetaInfo[] {
+  const tagMetaInfos: TagMetaInfo[] = []
+  for (const tag of tags) {
+    tagMetaInfos.push({
+      tag: tag,
+      count: questions.filter((item) => !!item.info!.tags?.includes(tag)).length
+    })
+  }
+  return tagMetaInfos
+}
+
+export function getAllAuthors(questions: Question[]): string[] {
+  const set = new Set<string>()
+  for (const q of questions) {
+    const author = q.info?.author
+    const name = author?.name || author?.github
+    set.add(name as string)
+  }
+  const sortAuthors = Array.from(set).sort()
+
+  return sortAuthors
+}
+
+export function getAllAuthorsInfo(questions: Question[], authors: string[]): AuthorMetaInfo[] {
+  const authorMetaInfos: AuthorMetaInfo[] = []
+  for (const author of authors) {
+    authorMetaInfos.push({
+      author: author,
+      count: questions.filter(
+        (item) => item.info!.author?.name === author || item.info!.author?.github === author
+      ).length
+    })
+  }
+  return authorMetaInfos
+}
+
+export function getAllDifficultiesInfo(questions: Question[]): DifficultyMetaInfo[] {
+  const difficultyMetaInfos: DifficultyMetaInfo[] = []
+  for (const difficulty of Object.keys(Difficulty)) {
+    difficultyMetaInfos.push({
+      difficulty: difficulty,
+      count: questions.filter((item) => item.difficulty === difficulty.toLowerCase()).length
+    })
+  }
+  return difficultyMetaInfos
 }
 
 export function loadInfo(s: string): any {
