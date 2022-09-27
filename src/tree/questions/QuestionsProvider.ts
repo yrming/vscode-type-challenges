@@ -13,7 +13,7 @@ import {
   TagMetaInfo,
   AuthorMetaInfo,
   DifficultyMetaInfo
-} from '../../type'
+} from '../../types'
 
 export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
   private _onDidChangeTreeData: EventEmitter<QuestionItem | undefined | void> = new EventEmitter<

@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as cp from 'child_process'
 import * as YAML from 'js-yaml'
-import { AuthorMetaInfo, Difficulty, DifficultyMetaInfo, Question, TagMetaInfo } from '../type'
+import { AuthorMetaInfo, Difficulty, DifficultyMetaInfo, Question, TagMetaInfo } from '../types'
 import { getWorkspaceFolder } from './settings'
 
 const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
