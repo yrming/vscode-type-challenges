@@ -64,13 +64,13 @@ export function getPreviewHTMLContent(title: string = '', markdownStr: string) {
                         })
                     })
 
-                    const $relatedElems = document.querySelectorAll('a[href^="https://github.com/type-challenges/type-challenges/blob/master/questions/"]');
+                    const $relatedElems = document.querySelectorAll('a[href^="https://github.com/type-challenges/type-challenges/blob/main/questions/"]');
                     $relatedElems.forEach(function($relatedElem) {
                         $relatedElem && $relatedElem.addEventListener('click', function(e) {
                             e.preventDefault();
                             e.stopPropagation();
                             const href = $relatedElem.getAttribute('href');
-                            const title = href.replace('https://github.com/type-challenges/type-challenges/blob/master/questions/', '').replace('/README.md', '');
+                            const title = href.replace('https://github.com/type-challenges/type-challenges/blob/main/questions/', '').replace('/README.md', '');
                             vscode.postMessage({
                                 command: 'previewRelated',
                                 text: title
@@ -87,14 +87,14 @@ export function getPreviewHTMLContent(title: string = '', markdownStr: string) {
 
                     const $takeElem = document.querySelector('a[href*="/play"]');
                     $takeElem && $takeElem.addEventListener('click', function(e) {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      const idx = ${title.split('-')[0].trim()}
-                      vscode.postMessage({
-                          command: 'takeChallenge',
-                          text: idx
-                      })
-                  })
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const idx = ${title.split('-')[0].trim()}
+                        vscode.postMessage({
+                            command: 'takeChallenge',
+                            text: idx
+                        })
+                    })
                 </script>
         </html>
     `
