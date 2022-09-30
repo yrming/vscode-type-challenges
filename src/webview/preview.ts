@@ -96,6 +96,7 @@ export function getPreviewHTMLContent(title: string = '', markdownStr: string) {
                         })
                     })
                 </script>
+            </body>
         </html>
     `
   return html
