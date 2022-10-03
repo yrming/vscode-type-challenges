@@ -22,7 +22,7 @@ Take Type Challenges in VS Code
 - Dark/Light mode
 
 <p align="center">
-<img width="800" src="resources/snapshot.png">
+<img width="800" src="resources/snapshot.png" style="border-radius: 5px">
 </p>
 
 ## Related
