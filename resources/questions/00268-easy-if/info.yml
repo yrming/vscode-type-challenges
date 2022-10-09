@@ -1,6 +1,10 @@
 difficulty: easy
 title: If
 tags: utils
+
+tsconfig:
+ strictNullChecks: true,
+  
 author:
   github: pashutk
   name: Pavel Glushkov
