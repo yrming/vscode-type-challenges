@@ -2,12 +2,14 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as cp from 'child_process'
 import * as YAML from 'js-yaml'
+import * as fse from 'fs-extra'
 import { AuthorMetaInfo, Difficulty, DifficultyMetaInfo, Question, TagMetaInfo } from '../types'
 import { getWorkspaceFolder } from './settings'
 
 const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
 
 export async function getAllQuestions(): Promise<Question[]> {
+  await createTsConfigFile()
   const localQuestions = getLocalQuestions()
   const localErrorQuestions = await getLocalErrorQuestions()
   const result: Question[] = []
@@ -179,7 +181,7 @@ async function getLocalErrorQuestions(): Promise<string[]> {
     return errorQuestions
   }
   try {
-    await exec('tsc *.ts --noEmit', { cwd: workspaceFolderSetting })
+    await exec('tsc --project tsconfig.json', { cwd: workspaceFolderSetting })
   } catch ({ error, stdout, stderr }) {
     if (stdout) {
       const lines = (stdout as string).split(/\r{0,1}\n/)
@@ -203,4 +205,17 @@ function getLocalQuestions(): string[] {
       return fileName
     })
   return localQuestions
+}
+
+async function createTsConfigFile() {
+  const tsConfigFileName = 'tsconfig.json'
+  const workspaceFolderSetting = getWorkspaceFolder()
+  if (!workspaceFolderSetting || !fs.existsSync(workspaceFolderSetting)) {
+    return
+  }
+  const tsConfigFlieDestPath = path.join(workspaceFolderSetting, tsConfigFileName)
+  if (!(await fse.pathExists(tsConfigFlieDestPath))) {
+    const tsConfigFlieResPath = path.join(__dirname, '..', '..', 'resources', tsConfigFileName)
+    fse.copyFileSync(tsConfigFlieResPath, tsConfigFlieDestPath)
+  }
 }
