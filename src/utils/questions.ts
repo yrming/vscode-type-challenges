@@ -7,6 +7,7 @@ import { AuthorMetaInfo, Difficulty, DifficultyMetaInfo, Question, TagMetaInfo }
 import { getWorkspaceFolder } from './settings'
 
 const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
+const tsConfigFileName = 'tsconfig.default.json'
 
 export async function getAllQuestions(): Promise<Question[]> {
   await createTsConfigFile()
@@ -181,7 +182,7 @@ async function getLocalErrorQuestions(): Promise<string[]> {
     return errorQuestions
   }
   try {
-    await exec('tsc --project tsconfig.json', { cwd: workspaceFolderSetting })
+    await exec(`tsc --project ${tsConfigFileName}`, { cwd: workspaceFolderSetting })
   } catch ({ error, stdout, stderr }) {
     if (stdout) {
       const lines = (stdout as string).split(/\r{0,1}\n/)
@@ -208,7 +209,6 @@ function getLocalQuestions(): string[] {
 }
 
 async function createTsConfigFile() {
-  const tsConfigFileName = 'tsconfig.json'
   const workspaceFolderSetting = getWorkspaceFolder()
   if (!workspaceFolderSetting || !fs.existsSync(workspaceFolderSetting)) {
     return
