@@ -5,6 +5,7 @@
     "lib": ["ES2020"],
     "sourceMap": false,
     "rootDir": "./",
-    "strict": true
+    "strict": true,
+    "noEmit": true
   }
 }
