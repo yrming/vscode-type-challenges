@@ -3,7 +3,7 @@
   "preview": true,
   "displayName": "Type Challenges",
   "description": "Take Type Challenges in VS Code",
-  "version": "1.7.3",
+  "version": "1.8.3",
   "publisher": "YRM",
   "license": "MIT",
   "icon": "resources/logo.png",
