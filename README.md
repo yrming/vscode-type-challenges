@@ -11,8 +11,6 @@ Take Type Challenges in VS Code
 
 <br>
 
-**Status**: Preview
-
 ## Features
 
 - View challenges in the side panel
