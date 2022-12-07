@@ -48,7 +48,8 @@ export interface Author {
 
 export enum Commands {
   PreviewQuestion = 'typeChallenges.previewQuestion',
-  OpenFolder = 'typeChallenges.openFolder'
+  OpenFolder = 'typeChallenges.openFolder',
+  Refresh = 'typeChallenges.refresh'
 }
 
 export interface DifficultyMetaInfo {

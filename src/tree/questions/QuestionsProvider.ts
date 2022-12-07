@@ -37,7 +37,7 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     this.allDifficultiesInfo = difficultiesInfo
     this.allTagsInfos = tagsInfo
     this.allAuthorsInfos = authorsInfo
-    commands.registerCommand('typeChallenges.refresh', () => {
+    commands.registerCommand(Commands.Refresh, () => {
       this.refresh()
     })
   }
