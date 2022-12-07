@@ -41,6 +41,11 @@
     "menus": {
       "view/title": [
         {
+          "command": "typeChallenges.openFolder",
+          "group": "navigation",
+          "when": "view == typeChallenges.questions"
+        },
+        {
           "command": "typeChallenges.refresh",
           "group": "navigation",
           "when": "view == typeChallenges.questions"
@@ -48,6 +53,11 @@
       ]
     },
     "commands": [
+      {
+        "command": "typeChallenges.openFolder",
+        "title": "Open Folder",
+        "icon": "$(folder)"
+      },
       {
         "command": "typeChallenges.refresh",
         "title": "Refresh",

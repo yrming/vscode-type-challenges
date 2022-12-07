@@ -22,6 +22,16 @@ export async function registerCommands(context: ExtensionContext): Promise<void>
   commands.registerCommand(Commands.PreviewQuestion, (question) => {
     _createPreviewWebviewPanel(question)
   })
+
+  commands.registerCommand(Commands.OpenFolder, async () => {
+    const workspaceFolder = await selectWorkspaceFolder()
+    if (!workspaceFolder) {
+      return
+    }
+    commands.executeCommand('vscode.openFolder', Uri.parse(workspaceFolder), {
+      forceNewWindow: true
+    })
+  })
 }
 
 const webviewPanels: Map<string, WebviewPanel> = new Map()
