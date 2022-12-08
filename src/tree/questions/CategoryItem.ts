@@ -13,5 +13,6 @@ export class CategoryItem extends TreeItem {
     this.collapsibleState = TreeItemCollapsibleState.Collapsed
   }
 
+  id = this.category
   contextValue = 'category'
 }

@@ -13,5 +13,6 @@ export class AuthorItem extends TreeItem {
     this.collapsibleState = TreeItemCollapsibleState.Collapsed
   }
 
+  id = this.author
   contextValue = 'author'
 }

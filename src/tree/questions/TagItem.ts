@@ -13,5 +13,6 @@ export class TagItem extends TreeItem {
     this.collapsibleState = TreeItemCollapsibleState.Collapsed
   }
 
+  id = this.tag
   contextValue = 'tag'
 }

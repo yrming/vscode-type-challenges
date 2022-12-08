@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 export enum Category {
   All = 'All',
-  Difficulty = 'Difficulty',
-  Tag = 'Tag',
-  Author = 'Author'
+  Difficulties = 'Difficulties',
+  Tags = 'Tags',
+  Authors = 'Authors'
 }
 
 export enum Difficulty {

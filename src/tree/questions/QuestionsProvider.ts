@@ -64,11 +64,11 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
       if (element instanceof CategoryItem) {
         if (element.category === Category.All) {
           return this.getAllQuestionItems()
-        } else if (element.category === Category.Difficulty) {
+        } else if (element.category === Category.Difficulties) {
           return this.getDifficultyItems()
-        } else if (element.category === Category.Tag) {
+        } else if (element.category === Category.Tags) {
           return this.getTagItems()
-        } else if (element.category === Category.Author) {
+        } else if (element.category === Category.Authors) {
           return this.getAuthorItems()
         }
       } else if (element instanceof DifficultyItem) {
@@ -85,13 +85,16 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
 
   getCategoryItems(): CategoryItem[] {
     const categoryItems = [
-      new CategoryItem(`${Category.All} (${this.allQuestions.length})`, Category.All),
       new CategoryItem(
-        `${Category.Difficulty} (${this.allDifficultiesInfo.length})`,
-        Category.Difficulty
+        `${Category.All} (${this.getFinishedLengthOfAllQuestions()}/${this.allQuestions.length})`,
+        Category.All
       ),
-      new CategoryItem(`${Category.Tag} (${this.allTagsInfos.length})`, Category.Tag),
-      new CategoryItem(`${Category.Author} (${this.allAuthorsInfos.length})`, Category.Author)
+      new CategoryItem(
+        `${Category.Difficulties} (${this.allDifficultiesInfo.length})`,
+        Category.Difficulties
+      ),
+      new CategoryItem(`${Category.Tags} (${this.allTagsInfos.length})`, Category.Tags),
+      new CategoryItem(`${Category.Authors} (${this.allAuthorsInfos.length})`, Category.Authors)
     ]
     return categoryItems
   }
@@ -100,7 +103,7 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     const difficultyItems: DifficultyItem[] = []
     this.allDifficultiesInfo.forEach((item) => {
       const difficultyItem = new DifficultyItem(
-        `${item.difficulty} (${item.count})`,
+        `${item.difficulty} (${this.getFinishedLengthOfDifficulty(item.difficulty)}/${item.count})`,
         item.difficulty
       )
       difficultyItems.push(difficultyItem)
@@ -111,7 +114,10 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
   getTagItems(): TagItem[] {
     const tagItems: TagItem[] = []
     this.allTagsInfos.forEach((item) => {
-      const tagItem = new TagItem(`${item.tag} (${item.count})`, item.tag)
+      const tagItem = new TagItem(
+        `${item.tag} (${this.getFinishedLengthOfTag(item.tag)}/${item.count})`,
+        item.tag
+      )
       tagItems.push(tagItem)
     })
     return tagItems
@@ -120,7 +126,10 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
   getAuthorItems(): AuthorItem[] {
     const authorItems: AuthorItem[] = []
     this.allAuthorsInfos.forEach((item) => {
-      const authorItem = new AuthorItem(`${item.author} (${item.count})`, item.author)
+      const authorItem = new AuthorItem(
+        `${item.author} (${this.getFinishedLengthOfAuthor(item.author)}/${item.count})`,
+        item.author
+      )
       authorItems.push(authorItem)
     })
     return authorItems
@@ -180,5 +189,33 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
       (item) => item.info!.author?.name === author || item.info!.author?.github === author
     )
     return this.genQuestionsItems(questions)
+  }
+
+  getFinishedLengthOfAllQuestions(): number {
+    const finishedLength = this.allQuestions.filter((item) => item._status === 'complete').length
+    return finishedLength
+  }
+
+  getFinishedLengthOfDifficulty(difficulty: string): number {
+    const finishedLength = this.allQuestions.filter(
+      (item) => item.difficulty === difficulty.toLocaleLowerCase() && item._status === 'complete'
+    ).length
+    return finishedLength
+  }
+
+  getFinishedLengthOfTag(tag: string): number {
+    const finishedLength = this.allQuestions.filter(
+      (item) => item.tags === tag && item._status === 'complete'
+    ).length
+    return finishedLength
+  }
+
+  getFinishedLengthOfAuthor(author: string): number {
+    const finishedLength = this.allQuestions.filter(
+      (item) =>
+        (item.info!.author?.name === author || item.info!.author?.github === author) &&
+        item._status === 'complete'
+    ).length
+    return finishedLength
   }
 }
