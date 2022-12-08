@@ -17,6 +17,7 @@ Take Type Challenges in VS Code
 - View challenges by difficulty/tag/author
 - Take the challenge directly in VS Code
 - Show the status of each challenge
+- Show challenge progress
 - Dark/Light mode
 
 <p align="center">
