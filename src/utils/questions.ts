@@ -7,7 +7,7 @@ import { AuthorMetaInfo, Difficulty, DifficultyMetaInfo, Question, TagMetaInfo }
 import { getWorkspaceFolder } from './settings'
 
 const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
-const tsConfigFileName = 'tsconfig.default.json'
+const tsConfigFileName = 'tsconfig.json'
 
 export async function getAllQuestions(): Promise<Question[]> {
   await createTsConfigFile()
