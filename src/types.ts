@@ -21,7 +21,6 @@ export interface Question {
   readMeJa?: string
   readMeKo?: string
   readMeZh?: string
-  tags?: string
   difficulty?: string
   info?: QuestionMetaInfo
   template?: string
