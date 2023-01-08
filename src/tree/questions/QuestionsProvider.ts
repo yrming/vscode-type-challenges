@@ -205,7 +205,7 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
 
   getFinishedLengthOfTag(tag: string): number {
     const finishedLength = this.allQuestions.filter(
-      (item) => item.tags === tag && item._status === 'complete'
+      (item) => item.info?.tags?.includes?.(tag) && item._status === 'complete'
     ).length
     return finishedLength
   }
