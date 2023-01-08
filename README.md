@@ -13,8 +13,6 @@ Take Type Challenges in VS Code
 
 > **Note**: This extension uses **tsc** to check the status of each challenge, so you should install **Typescript** globally.
 
-<br>
-
 ## Features
 
 - View challenges in the side panel
