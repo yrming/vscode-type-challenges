@@ -11,7 +11,7 @@ Take Type Challenges in VS Code
 
 <br>
 
-> **Note**: This extension uses **tsc** to check the status of each challenge, so you should install **Typescript** globally.
+> **Note**: This extension uses **tsc** to check the status of each challenge, so you should install **TypeScript** globally.
 
 ## Features
 
