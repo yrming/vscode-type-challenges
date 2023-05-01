@@ -186,7 +186,7 @@ async function getLocalErrorQuestions(): Promise<string[]> {
     await exec(`tsc --project ${tsConfigFileName}`, { cwd: workspaceFolderSetting })
   } catch ({ error, stdout, stderr }) {
     if (stderr) {
-      window.showErrorMessage(stderr)
+      window.showErrorMessage(stderr as string)
     }
     if (stdout) {
       const lines = (stdout as string).split(/\r{0,1}\n/)
