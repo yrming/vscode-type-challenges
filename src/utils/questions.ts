@@ -3,6 +3,7 @@ import * as path from 'path'
 import * as cp from 'child_process'
 import * as YAML from 'js-yaml'
 import * as fse from 'fs-extra'
+import { window } from 'vscode'
 import { AuthorMetaInfo, Difficulty, DifficultyMetaInfo, Question, TagMetaInfo } from '../types'
 import { getWorkspaceFolder } from './settings'
 
@@ -184,6 +185,9 @@ async function getLocalErrorQuestions(): Promise<string[]> {
   try {
     await exec(`tsc --project ${tsConfigFileName}`, { cwd: workspaceFolderSetting })
   } catch ({ error, stdout, stderr }) {
+    if (stderr) {
+      window.showErrorMessage(stderr)
+    }
     if (stdout) {
       const lines = (stdout as string).split(/\r{0,1}\n/)
       return lines
