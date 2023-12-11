@@ -97,7 +97,7 @@ export function getAllTagsInfo(questions: Question[], tags: string[]): TagMetaIn
   for (const tag of tags) {
     tagMetaInfos.push({
       tag: tag,
-      count: questions.filter((item) => !!item.info!.tags?.includes(tag)).length
+      count: questions.filter((item) => !!item.info?.tags?.includes(tag)).length
     })
   }
   return tagMetaInfos
@@ -121,7 +121,7 @@ export function getAllAuthorsInfo(questions: Question[], authors: string[]): Aut
     authorMetaInfos.push({
       author: author,
       count: questions.filter(
-        (item) => item.info!.author?.name === author || item.info!.author?.github === author
+        (item) => item.info?.author?.name === author || item.info?.author?.github === author
       ).length
     })
   }
