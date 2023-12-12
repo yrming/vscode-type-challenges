@@ -64,3 +64,9 @@ export interface AuthorMetaInfo {
   author: string
   count: number
 }
+
+export interface ExecError {
+  error: any
+  stdout: string
+  stderr: string
+}
