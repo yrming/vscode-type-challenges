@@ -28,7 +28,8 @@ export async function registerCommands(context: ExtensionContext): Promise<void>
     if (!workspaceFolder) {
       return
     }
-    commands.executeCommand('vscode.openFolder', Uri.parse(workspaceFolder), {
+    const folderPath = workspaceFolder.split('\\').join('/')
+    commands.executeCommand('vscode.openFolder', Uri.file(folderPath), {
       forceNewWindow: true
     })
   })
