@@ -180,13 +180,13 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
   }
 
   getQuestionsItemsByTag(tag: string): QuestionItem[] {
-    const questions = this.allQuestions.filter((item) => !!item.info!.tags?.includes(tag))
+    const questions = this.allQuestions.filter((item) => !!item.info?.tags?.includes(tag))
     return this.genQuestionsItems(questions)
   }
 
   getQuestionsItemsByAuthor(author: string): QuestionItem[] {
     const questions = this.allQuestions.filter(
-      (item) => item.info!.author?.name === author || item.info!.author?.github === author
+      (item) => item.info?.author?.name === author || item.info?.author?.github === author
     )
     return this.genQuestionsItems(questions)
   }
@@ -213,7 +213,7 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
   getFinishedLengthOfAuthor(author: string): number {
     const finishedLength = this.allQuestions.filter(
       (item) =>
-        (item.info!.author?.name === author || item.info!.author?.github === author) &&
+        (item.info?.author?.name === author || item.info?.author?.github === author) &&
         item._status === 'complete'
     ).length
     return finishedLength
