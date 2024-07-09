@@ -26,17 +26,19 @@ export async function registerTrees(context: ExtensionContext): Promise<void> {
   context.subscriptions.push(
     workspace.onDidSaveTextDocument(() => {
       const editor = window.activeTextEditor
-      if (editor) {
-        const workspaceFolderSetting = getWorkspaceFolder()
-        if (
-          !workspaceFolderSetting ||
-          !fs.existsSync(workspaceFolderSetting) ||
-          !editor.document.fileName.startsWith(workspaceFolderSetting)
-        ) {
-          return
-        }
-        questionsProvider.refresh()
+      if (!editor) {
+        return
       }
+
+      const workspaceFolderSetting = getWorkspaceFolder()
+      if (
+        !workspaceFolderSetting ||
+        !fs.existsSync(workspaceFolderSetting) ||
+        !editor.document.fileName.startsWith(workspaceFolderSetting)
+      ) {
+        return
+      }
+      questionsProvider.refresh()
     })
   )
   window.registerTreeDataProvider('typeChallenges.questions', questionsProvider)

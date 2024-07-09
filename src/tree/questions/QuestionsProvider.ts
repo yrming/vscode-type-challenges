@@ -12,7 +12,8 @@ import {
   Question,
   TagMetaInfo,
   AuthorMetaInfo,
-  DifficultyMetaInfo
+  DifficultyMetaInfo,
+  QuestionStatus
 } from '../../types'
 
 export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
@@ -138,15 +139,17 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
   genQuestionsItems(questions: Question[]): QuestionItem[] {
     const questionItems: QuestionItem[] = []
     questions.forEach((question) => {
-      const treeItem = new QuestionItem(
-        `${question.idx!} - ${question.title!}`,
-        {
+      const treeItem = new QuestionItem({
+        label: `${question.idx!} - ${question.title!}`,
+        command: {
           title: 'Preview Question',
           command: Commands.PreviewQuestion,
-          arguments: [question]
+          arguments: [question],
         },
-        this.getStatusIcon(question._status)
-      )
+        iconPath: this.getStatusIcon(question._status),
+        description: question._status === 'completeOnRemote' ? 'remote' : undefined,
+      })
+
       questionItems.push(treeItem)
     })
     return questionItems
@@ -158,6 +161,7 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     const todoIconPath = path.join(__dirname, '..', '..', '..', 'resources', 'todo.svg')
     switch (status) {
       case 'complete':
+      case 'completeOnRemote':
         return completeIconPath
       case 'error':
         return errorIconPath
@@ -192,20 +196,20 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
   }
 
   getFinishedLengthOfAllQuestions(): number {
-    const finishedLength = this.allQuestions.filter((item) => item._status === 'complete').length
+    const finishedLength = this.allQuestions.filter((item) => isCompleted(item._status)).length
     return finishedLength
   }
 
   getFinishedLengthOfDifficulty(difficulty: string): number {
     const finishedLength = this.allQuestions.filter(
-      (item) => item.difficulty === difficulty.toLocaleLowerCase() && item._status === 'complete'
+      (item) => item.difficulty === difficulty.toLocaleLowerCase() && isCompleted(item._status)
     ).length
     return finishedLength
   }
 
   getFinishedLengthOfTag(tag: string): number {
     const finishedLength = this.allQuestions.filter(
-      (item) => item.info?.tags?.includes?.(tag) && item._status === 'complete'
+      (item) => item.info?.tags?.includes?.(tag) && isCompleted(item._status)
     ).length
     return finishedLength
   }
@@ -214,8 +218,12 @@ export class QuestionsProvider implements TreeDataProvider<QuestionItem> {
     const finishedLength = this.allQuestions.filter(
       (item) =>
         (item.info?.author?.name === author || item.info?.author?.github === author) &&
-        item._status === 'complete'
+        isCompleted(item._status)
     ).length
     return finishedLength
   }
+}
+
+function isCompleted(status?: QuestionStatus): boolean {
+  return status === 'complete' || status === 'completeOnRemote'
 }

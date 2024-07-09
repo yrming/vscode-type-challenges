@@ -14,6 +14,8 @@ export enum Difficulty {
   Extreme = 'Extreme'
 }
 
+export type QuestionStatus = 'complete' | 'error' | 'todo' | 'completeOnRemote'
+
 export interface Question {
   idx?: number
   title?: string
@@ -26,7 +28,7 @@ export interface Question {
   template?: string
   testCases?: string
   _original?: string
-  _status?: 'complete' | 'error' | 'todo'
+  _status?: QuestionStatus
 }
 
 export interface QuestionMetaInfo {

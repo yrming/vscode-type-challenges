@@ -6,11 +6,32 @@ import * as fse from 'fs-extra'
 import { window } from 'vscode'
 import { AuthorMetaInfo, Difficulty, DifficultyMetaInfo, ExecError, Question, TagMetaInfo } from '../types'
 import { getWorkspaceFolder } from './settings'
+import { ISyncService } from '../tree/services/SyncService'
+import ServiceLocator from '../tree/services/ServiceLocator'
 
 const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
 const tsConfigFileName = 'tsconfig.json'
 
 export async function getAllQuestions(): Promise<Question[]> {
+  const allQuestions = await _getAllQuestions();
+
+  const syncService = ServiceLocator.get<ISyncService>('SyncService');
+
+  syncService.putCompletedQuestions(_getCompletedIds(allQuestions))
+
+  const completedQuestionIds = syncService.getCompletedQuestions()
+
+  allQuestions.forEach((question) => {
+    if (question.idx && completedQuestionIds.remote.includes(question.idx.toString())) {
+      question._status = 'completeOnRemote'
+    }
+  })
+
+  return allQuestions;
+}
+
+
+async function _getAllQuestions(): Promise<Question[]> {
   await createTsConfigFile()
   const localQuestions = getLocalQuestions()
   const localErrorQuestions = await getLocalErrorQuestions()
@@ -78,6 +99,13 @@ export async function getAllQuestions(): Promise<Question[]> {
 
   result.sort((a, b) => a.idx! - b.idx!)
   return result
+}
+
+function _getCompletedIds(allQuestions: Question[]) {
+  return allQuestions
+    .filter((question) => question._status === 'complete')
+    .map(question => question.idx?.toString())
+    .filter<string>((id): id is string => !!id)
 }
 
 export function getAllTags(questions: Question[]): string[] {
