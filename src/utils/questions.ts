@@ -4,8 +4,17 @@ import * as cp from 'child_process'
 import * as YAML from 'js-yaml'
 import * as fse from 'fs-extra'
 import { window } from 'vscode'
-import { AuthorMetaInfo, Difficulty, DifficultyMetaInfo, ExecError, Question, TagMetaInfo } from '../types'
+import {
+  AuthorMetaInfo,
+  Difficulty,
+  DifficultyMetaInfo,
+  ExecError,
+  Question,
+  TagMetaInfo
+} from '../types'
 import { getWorkspaceFolder } from './settings'
+import { decode } from 'iconv-lite'
+import { getSystemEncoding } from 'sys-encoding'
 
 const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
 const tsConfigFileName = 'tsconfig.json'
@@ -167,11 +176,14 @@ function exec(
   options: cp.ExecOptions
 ): Promise<{ stdout: string; stderr: string }> {
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
-    cp.exec(command, options, (error, stdout, stderr) => {
+    cp.exec(command, { encoding: 'buffer', ...options }, (error, stdout, stderr) => {
+      const encoding = getSystemEncoding()
+      const out = decode(stdout, encoding)
+      const err = decode(stderr, encoding)
       if (error) {
-        reject({ error, stdout, stderr })
+        reject({ error, stdout: out, stderr: err })
       }
-      resolve({ stdout, stderr })
+      resolve({ stdout: out, stderr: err })
     })
   })
 }
