@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 export enum Category {
   All = 'All',
   Difficulties = 'Difficulties',
   Tags = 'Tags',
-  Authors = 'Authors'
+  Authors = 'Authors',
 }
 
 export enum Difficulty {
@@ -11,7 +10,7 @@ export enum Difficulty {
   Easy = 'Easy',
   Medium = 'Medium',
   Hard = 'Hard',
-  Extreme = 'Extreme'
+  Extreme = 'Extreme',
 }
 
 export interface Question {
@@ -48,7 +47,7 @@ export interface Author {
 export enum Commands {
   PreviewQuestion = 'typeChallenges.previewQuestion',
   OpenFolder = 'typeChallenges.openFolder',
-  Refresh = 'typeChallenges.refresh'
+  Refresh = 'typeChallenges.refresh',
 }
 
 export interface DifficultyMetaInfo {

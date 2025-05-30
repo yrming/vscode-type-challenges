@@ -1,23 +1,26 @@
-import * as fs from 'fs'
-import * as path from 'path'
-import * as cp from 'child_process'
-import * as YAML from 'js-yaml'
-import * as fse from 'fs-extra'
-import { window } from 'vscode'
-import {
+import type {
   AuthorMetaInfo,
-  Difficulty,
   DifficultyMetaInfo,
   ExecError,
   Question,
-  TagMetaInfo
+  TagMetaInfo,
+} from '../types'
+import * as cp from 'node:child_process'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
+import * as fse from 'fs-extra'
+import { decode } from 'iconv-lite'
+import * as YAML from 'js-yaml'
+import { getSystemEncoding } from 'sys-encoding'
+import { window } from 'vscode'
+import {
+  Difficulty,
 } from '../types'
 import { getWorkspaceFolder } from './settings'
-import { decode } from 'iconv-lite'
-import { getSystemEncoding } from 'sys-encoding'
 
-const rootPath = path.join(__dirname, '..', '..', 'resources', 'questions')
+const rootPath = path.join(__dirname, '..', 'resources', 'questions')
 const tsConfigFileName = 'tsconfig.json'
+const reg = /^(\d+)-([^-]+)-(.+)$/
 
 export async function getAllQuestions(): Promise<Question[]> {
   await createTsConfigFile()
@@ -27,17 +30,17 @@ export async function getAllQuestions(): Promise<Question[]> {
   const questions = fs.readdirSync(rootPath)
   questions.forEach((folderName) => {
     const question: Question = {}
-    const reg = /^(\d+)-([\s\S]+?)-([\s\S]+)$/
     const matches = folderName.match(reg)
     if (Array.isArray(matches)) {
-      question.idx = parseInt(matches[1])
+      question.idx = Number.parseInt(matches[1])
       question.difficulty = matches[2]
       question._original = folderName
       question._status = 'todo'
       if (localQuestions.includes(`${folderName}.ts`)) {
-        if (localErrorQuestions.find((errorMsg) => errorMsg.includes(folderName))) {
+        if (localErrorQuestions.find(errorMsg => errorMsg.includes(folderName))) {
           question._status = 'error'
-        } else {
+        }
+        else {
           question._status = 'complete'
         }
       }
@@ -105,8 +108,8 @@ export function getAllTagsInfo(questions: Question[], tags: string[]): TagMetaIn
   const tagMetaInfos: TagMetaInfo[] = []
   for (const tag of tags) {
     tagMetaInfos.push({
-      tag: tag,
-      count: questions.filter((item) => !!item.info?.tags?.includes(tag)).length
+      tag,
+      count: questions.filter(item => !!item.info?.tags?.includes(tag)).length,
     })
   }
   return tagMetaInfos
@@ -128,10 +131,10 @@ export function getAllAuthorsInfo(questions: Question[], authors: string[]): Aut
   const authorMetaInfos: AuthorMetaInfo[] = []
   for (const author of authors) {
     authorMetaInfos.push({
-      author: author,
+      author,
       count: questions.filter(
-        (item) => item.info?.author?.name === author || item.info?.author?.github === author
-      ).length
+        item => item.info?.author?.name === author || item.info?.author?.github === author,
+      ).length,
     })
   }
   return authorMetaInfos
@@ -141,8 +144,8 @@ export function getAllDifficultiesInfo(questions: Question[]): DifficultyMetaInf
   const difficultyMetaInfos: DifficultyMetaInfo[] = []
   for (const difficulty of Object.keys(Difficulty)) {
     difficultyMetaInfos.push({
-      difficulty: difficulty,
-      count: questions.filter((item) => item.difficulty === difficulty.toLowerCase()).length
+      difficulty,
+      count: questions.filter(item => item.difficulty === difficulty.toLowerCase()).length,
     })
   }
   return difficultyMetaInfos
@@ -163,7 +166,8 @@ export function loadInfo(s: string): any {
         .split(',')
         .map((i: string) => i.trim())
         .filter(Boolean)
-    } else {
+    }
+    else {
       object[key] = undefined
     }
   }
@@ -173,14 +177,15 @@ export function loadInfo(s: string): any {
 
 function exec(
   command: string,
-  options: cp.ExecOptions
-): Promise<{ stdout: string; stderr: string }> {
-  return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
+  options: cp.ExecOptions,
+): Promise<{ stdout: string, stderr: string }> {
+  return new Promise<{ stdout: string, stderr: string }>((resolve, reject) => {
     cp.exec(command, { encoding: 'buffer', ...options }, (error, stdout, stderr) => {
       const encoding = getSystemEncoding()
       const out = decode(stdout, encoding)
       const err = decode(stderr, encoding)
       if (error) {
+        // eslint-disable-next-line prefer-promise-reject-errors
         reject({ error, stdout: out, stderr: err })
       }
       resolve({ stdout: out, stderr: err })
@@ -189,20 +194,21 @@ function exec(
 }
 
 async function getLocalErrorQuestions(): Promise<string[]> {
-  let errorQuestions: string[] = []
+  const errorQuestions: string[] = []
   const workspaceFolderSetting = getWorkspaceFolder()
   if (!workspaceFolderSetting || !fs.existsSync(workspaceFolderSetting)) {
     return errorQuestions
   }
   try {
     await exec(`tsc --project ${tsConfigFileName}`, { cwd: workspaceFolderSetting })
-  } catch (err) {
-    const { error, stdout, stderr } = err as ExecError
+  }
+  catch (err) {
+    const { stdout, stderr } = err as ExecError
     if (stderr) {
       window.showErrorMessage(stderr)
     }
     if (stdout) {
-      const lines = stdout.split(/\r{0,1}\n/)
+      const lines = stdout.split(/\r?\n/)
       return lines
     }
   }
@@ -216,9 +222,8 @@ function getLocalQuestions(): string[] {
     return localQuestions
   }
   const questions = fs.readdirSync(workspaceFolderSetting)
-  const reg = /^(\d+)-([\s\S]+?)-([\s\S]+)$/
   localQuestions = questions
-    .filter((fileName) => reg.test(fileName))
+    .filter(fileName => reg.test(fileName))
     .map((fileName) => {
       return fileName
     })
@@ -232,7 +237,7 @@ async function createTsConfigFile() {
   }
   const tsConfigFlieDestPath = path.join(workspaceFolderSetting, tsConfigFileName)
   if (!(await fse.pathExists(tsConfigFlieDestPath))) {
-    const tsConfigFlieResPath = path.join(__dirname, '..', '..', 'resources', tsConfigFileName)
+    const tsConfigFlieResPath = path.join(__dirname, '..', 'resources', tsConfigFileName)
     fse.copyFileSync(tsConfigFlieResPath, tsConfigFlieDestPath)
   }
 }

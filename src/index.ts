@@ -1,6 +1,6 @@
-import { ExtensionContext } from 'vscode'
-import { registerTrees } from './tree/registerTrees'
+import type { ExtensionContext } from 'vscode'
 import { registerCommands } from './commands/registerCommands'
+import { registerTrees } from './tree/registerTrees'
 
 export function activate(context: ExtensionContext) {
   registerTrees(context)

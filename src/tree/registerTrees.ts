@@ -1,15 +1,16 @@
-import { ExtensionContext, window, workspace } from 'vscode'
-import * as fs from 'fs'
-import { getWorkspaceFolder } from '../utils/settings'
-import { QuestionsProvider } from './questions/QuestionsProvider'
+import type { ExtensionContext } from 'vscode'
+import * as fs from 'node:fs'
+import { window, workspace } from 'vscode'
 import {
   getAllAuthors,
   getAllAuthorsInfo,
   getAllDifficultiesInfo,
   getAllQuestions,
   getAllTags,
-  getAllTagsInfo
+  getAllTagsInfo,
 } from '../utils/questions'
+import { getWorkspaceFolder } from '../utils/settings'
+import { QuestionsProvider } from './questions/QuestionsProvider'
 
 export async function registerTrees(context: ExtensionContext): Promise<void> {
   const allQuestions = await getAllQuestions()
@@ -21,7 +22,7 @@ export async function registerTrees(context: ExtensionContext): Promise<void> {
     allQuestions,
     allDifficultiesInfo,
     allTagsInfo,
-    allAuthorsInfo
+    allAuthorsInfo,
   )
   context.subscriptions.push(
     workspace.onDidSaveTextDocument(() => {
@@ -29,15 +30,15 @@ export async function registerTrees(context: ExtensionContext): Promise<void> {
       if (editor) {
         const workspaceFolderSetting = getWorkspaceFolder()
         if (
-          !workspaceFolderSetting ||
-          !fs.existsSync(workspaceFolderSetting) ||
-          !editor.document.fileName.startsWith(workspaceFolderSetting)
+          !workspaceFolderSetting
+          || !fs.existsSync(workspaceFolderSetting)
+          || !editor.document.fileName.startsWith(workspaceFolderSetting)
         ) {
           return
         }
         questionsProvider.refresh()
       }
-    })
+    }),
   )
   window.registerTreeDataProvider('typeChallenges.questions', questionsProvider)
 }

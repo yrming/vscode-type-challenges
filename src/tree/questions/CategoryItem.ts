@@ -1,4 +1,5 @@
-import { Command, ThemeIcon, TreeItem, TreeItemCollapsibleState } from 'vscode'
+import type { Command, ThemeIcon } from 'vscode'
+import { TreeItem, TreeItemCollapsibleState } from 'vscode'
 
 export class CategoryItem extends TreeItem {
   constructor(
@@ -7,12 +8,11 @@ export class CategoryItem extends TreeItem {
     public readonly tooltip?: string,
     public readonly collapsibleState?: TreeItemCollapsibleState,
     public readonly iconPath?: string | ThemeIcon,
-    public readonly command?: Command
+    public readonly command?: Command,
   ) {
     super(label)
     this.collapsibleState = TreeItemCollapsibleState.Collapsed
+    this.id = this.category
+    this.contextValue = 'category'
   }
-
-  id = this.category
-  contextValue = 'category'
 }

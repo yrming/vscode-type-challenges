@@ -1,17 +1,19 @@
 // Copyright (c) jdneo. All rights reserved.
 // Licensed under the MIT license.
 
-import * as os from 'os'
-import * as path from 'path'
-import {
-  workspace,
-  WorkspaceConfiguration,
-  window,
-  Uri,
-  ConfigurationTarget,
+import type {
   OpenDialogOptions,
+  QuickPickItem,
+  WorkspaceConfiguration,
   WorkspaceFolder,
-  QuickPickItem
+} from 'vscode'
+import * as os from 'node:os'
+import * as path from 'node:path'
+import {
+  ConfigurationTarget,
+  Uri,
+  window,
+  workspace,
 } from 'vscode'
 
 interface IQuickItemEx<T> extends QuickPickItem {
@@ -52,26 +54,29 @@ async function determineTypeChallengesFolder(): Promise<string> {
     {
       label: `Default location`,
       detail: `${path.join(os.homedir(), '.typeChallenges')}`,
-      value: `${path.join(os.homedir(), '.typeChallenges')}`
+      value: `${path.join(os.homedir(), '.typeChallenges')}`,
     },
     {
       label: '$(file-directory) Browse...',
-      value: ':browse'
-    }
+      value: ':browse',
+    },
   )
   const choice: IQuickItemEx<string> | undefined = await window.showQuickPick(picks, {
-    placeHolder: 'Select where you would like to save your Type Challenges files'
+    placeHolder: 'Select where you would like to save your Type Challenges files',
   })
   if (!choice) {
     result = ''
-  } else if (choice.value === ':browse') {
+  }
+  else if (choice.value === ':browse') {
     const directory: Uri[] | undefined = await showDirectorySelectDialog()
     if (!directory || directory.length < 1) {
       result = ''
-    } else {
+    }
+    else {
       result = directory[0].fsPath
     }
-  } else {
+  }
+  else {
     result = choice.value
   }
 
@@ -87,7 +92,7 @@ export async function showDirectorySelectDialog(fsPath?: string): Promise<Uri[] 
     canSelectFiles: false,
     canSelectFolders: true,
     canSelectMany: false,
-    openLabel: 'Select'
+    openLabel: 'Select',
   }
   return await window.showOpenDialog(options)
 }
@@ -96,19 +101,11 @@ function getBelongingWorkspaceFolderUri(fsPath: string | undefined): Uri | undef
   let defaultUri: Uri | undefined
   if (fsPath) {
     const workspaceFolder: WorkspaceFolder | undefined = workspace.getWorkspaceFolder(
-      Uri.file(fsPath)
+      Uri.file(fsPath),
     )
     if (workspaceFolder) {
       defaultUri = workspaceFolder.uri
     }
   }
   return defaultUri
-}
-
-function isSubFolder(from: string, to: string): boolean {
-  const relative: string = path.relative(from, to)
-  if (relative === '') {
-    return true
-  }
-  return !relative.startsWith('..') && !path.isAbsolute(relative)
 }

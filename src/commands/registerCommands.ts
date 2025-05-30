@@ -1,24 +1,27 @@
-import {
+import type {
   ExtensionContext,
-  commands,
-  window,
-  ViewColumn,
-  Uri,
-  Selection,
-  Position,
-  WebviewPanel
+  WebviewPanel,
 } from 'vscode'
-import { marked } from 'marked'
-import * as path from 'path'
+import type { Question } from '../types'
+import * as path from 'node:path'
 import * as fse from 'fs-extra'
 import hljs from 'highlight.js'
-import { Commands, Question } from '../types'
-import { getPreviewHTMLContent } from '../webview/preview'
+import { marked } from 'marked'
+import {
+  commands,
+  Position,
+  Selection,
+  Uri,
+  ViewColumn,
+  window,
+} from 'vscode'
+import { Commands } from '../types'
 import { getAllQuestions } from '../utils/questions'
 import selectWorkspaceFolder, { getDefaultLanguage } from '../utils/settings'
 import { testUtil } from '../utils/test'
+import { getPreviewHTMLContent } from '../webview/preview'
 
-export async function registerCommands(context: ExtensionContext): Promise<void> {
+export async function registerCommands(_context: ExtensionContext): Promise<void> {
   commands.registerCommand(Commands.PreviewQuestion, (question) => {
     _createPreviewWebviewPanel(question)
   })
@@ -30,14 +33,14 @@ export async function registerCommands(context: ExtensionContext): Promise<void>
     }
     const folderPath = workspaceFolder.split('\\').join('/')
     commands.executeCommand('vscode.openFolder', Uri.file(folderPath), {
-      forceNewWindow: true
+      forceNewWindow: true,
     })
   })
 }
 
 const webviewPanels: Map<string, WebviewPanel> = new Map()
 
-const _createPreviewWebviewPanel = (question: Question) => {
+function _createPreviewWebviewPanel(question: Question) {
   const viewType = 'typeChallenges.preview'
   const panelTitle = `${question.idx} - ${question.title}`
   const defaultLanguage = getDefaultLanguage()
@@ -47,7 +50,7 @@ const _createPreviewWebviewPanel = (question: Question) => {
     return
   }
   const panel = window.createWebviewPanel(viewType, panelTitle, ViewColumn.One, {
-    enableScripts: true
+    enableScripts: true,
   })
   webviewPanels.set(webviewPanelKey, panel)
   let readMe: string | undefined
@@ -69,41 +72,47 @@ const _createPreviewWebviewPanel = (question: Question) => {
     readMe = question.readMe
   }
   marked.setOptions({
-    highlight: function (code: any) {
+    highlight(code: any) {
       return hljs.highlightAuto(code).value
-    }
+    },
   })
   panel.webview.html = getPreviewHTMLContent(panelTitle, marked(readMe))
   panel.webview.onDidReceiveMessage(async (message) => {
     const allQuestions = await getAllQuestions()
     switch (message.command) {
       case 'switchReadMe':
+      {
         const key = message.text as keyof Question
         panel.webview.html = getPreviewHTMLContent(panelTitle, marked(question[key]))
         break
+      }
       case 'previewRelated':
+      {
         if (!message.text) {
           return
         }
-        const relatedQuestion = allQuestions.find((q) => q._original === message.text)
+        const relatedQuestion = allQuestions.find(q => q._original === message.text)
         if (!relatedQuestion) {
           return
         }
         _createPreviewWebviewPanel(relatedQuestion)
         break
+      }
       case 'back':
         commands.executeCommand('workbench.action.closeActiveEditor')
         break
       case 'takeChallenge':
+      {
         if (!message.text) {
           return
         }
-        const takeQuestion = allQuestions.find((q) => q.idx === message.text)
+        const takeQuestion = allQuestions.find(q => q.idx === message.text)
         if (!takeQuestion) {
           return
         }
         takeChallenge(takeQuestion)
         break
+      }
       default:
         break
     }
@@ -125,7 +134,7 @@ async function takeChallenge(question: Question) {
     await fse.writeFile(testUtilsPath, testUtil)
   }
   const fileName = `${question._original}.ts`
-  let finalPath: string = path.join(workspaceFolder, fileName)
+  const finalPath: string = path.join(workspaceFolder, fileName)
   if (!(await fse.pathExists(finalPath))) {
     await fse.createFile(finalPath)
     const testCasesCommentStart = `// ============= Test Cases =============`
@@ -136,7 +145,7 @@ async function takeChallenge(question: Question) {
   }
   const editor = await window.showTextDocument(Uri.file(finalPath), {
     preview: false,
-    viewColumn: ViewColumn.One
+    viewColumn: ViewColumn.One,
   })
 
   const text = editor.document.getText()
@@ -147,14 +156,15 @@ async function takeChallenge(question: Question) {
       let anyIndex = -1
       if (line.includes('= any')) {
         anyIndex = line.indexOf('= any')
-      } else if (line.includes(': any')) {
+      }
+      else if (line.includes(': any')) {
         anyIndex = line.lastIndexOf(': any')
       }
       if (anyIndex > -1) {
         targetLine = index
         editor.selection = new Selection(
           new Position(targetLine, anyIndex + 2),
-          new Position(targetLine, anyIndex + 5)
+          new Position(targetLine, anyIndex + 5),
         )
       }
     }
