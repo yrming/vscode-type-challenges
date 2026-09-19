@@ -9,6 +9,7 @@ import type {
 } from 'vscode'
 import * as os from 'node:os'
 import * as path from 'node:path'
+import * as fse from 'fs-extra'
 import {
   ConfigurationTarget,
   Uri,
@@ -23,16 +24,24 @@ interface IQuickItemEx<T> extends QuickPickItem {
 type LanguageType = 'zh' | 'en' | 'ja' | 'ko'
 
 export default async function selectWorkspaceFolder(): Promise<string> {
-  let workspaceFolderSetting: string = getWorkspaceFolder()
-  if (workspaceFolderSetting.trim() === '') {
-    workspaceFolderSetting = await determineTypeChallengesFolder()
-    if (workspaceFolderSetting === '') {
-      // User cancelled
-      return workspaceFolderSetting
+  const configured: string = getWorkspaceFolder()
+  if (configured.trim() !== '') {
+    // A non-empty setting doesn't mean it's usable: Settings Sync may bring over
+    // a path from another machine that neither exists nor can be created here.
+    // Proactively ensure the directory; if that fails, treat it as invalid and
+    // re-prompt instead of returning a bad path that fails silently later.
+    try {
+      await fse.ensureDir(configured)
+      return configured
+    }
+    catch {
+      // Path is invalid (missing and not creatable); fall through to re-prompt
     }
   }
 
-  return workspaceFolderSetting
+  // Never configured, or the configured path is invalid on this machine:
+  // prompt the user to pick a local folder and persist it ('' if cancelled)
+  return await determineTypeChallengesFolder()
 }
 
 export function getWorkspaceFolder(): string {

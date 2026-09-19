@@ -110,7 +110,9 @@ function _createPreviewWebviewPanel(question: Question) {
         if (!takeQuestion) {
           return
         }
-        takeChallenge(takeQuestion)
+        takeChallenge(takeQuestion).catch((err) => {
+          window.showErrorMessage(`Failed to take the challenge: ${err?.message ?? err}`)
+        })
         break
       }
       default:
@@ -129,19 +131,27 @@ async function takeChallenge(question: Question) {
   }
 
   const testUtilsPath = path.join(workspaceFolder, 'test-utils.ts')
-  if (!(await fse.pathExists(testUtilsPath))) {
-    await fse.createFile(testUtilsPath)
-    await fse.writeFile(testUtilsPath, testUtil)
-  }
   const fileName = `${question._original}.ts`
   const finalPath: string = path.join(workspaceFolder, fileName)
-  if (!(await fse.pathExists(finalPath))) {
-    await fse.createFile(finalPath)
-    const testCasesCommentStart = `// ============= Test Cases =============`
-    const yourCodeCommentStart = `// ============= Your Code Here =============`
-    const testCasesCode = question.testCases?.replace(/@type-challenges\/utils/g, './test-utils')
-    const codeTemplate = `${testCasesCommentStart}\r\n${testCasesCode}\r\n\r\n${yourCodeCommentStart}\r\n${question.template}`
-    await fse.writeFile(finalPath, codeTemplate)
+  try {
+    if (!(await fse.pathExists(testUtilsPath))) {
+      await fse.createFile(testUtilsPath)
+      await fse.writeFile(testUtilsPath, testUtil)
+    }
+    if (!(await fse.pathExists(finalPath))) {
+      await fse.createFile(finalPath)
+      const testCasesCommentStart = `// ============= Test Cases =============`
+      const yourCodeCommentStart = `// ============= Your Code Here =============`
+      const testCasesCode = question.testCases?.replace(/@type-challenges\/utils/g, './test-utils')
+      const codeTemplate = `${testCasesCommentStart}\r\n${testCasesCode}\r\n\r\n${yourCodeCommentStart}\r\n${question.template}`
+      await fse.writeFile(finalPath, codeTemplate)
+    }
+  }
+  catch {
+    window.showErrorMessage(
+      `Failed to create the answer file in ${workspaceFolder}. Please check that the directory is writable, or update the workspace folder setting.`,
+    )
+    return
   }
   const editor = await window.showTextDocument(Uri.file(finalPath), {
     preview: false,
