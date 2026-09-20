@@ -111,7 +111,7 @@ function _createPreviewWebviewPanel(question: Question) {
           return
         }
         takeChallenge(takeQuestion).catch((err) => {
-          window.showErrorMessage(`Failed to take the challenge: ${err?.message ?? err}`)
+          window.showErrorMessage(`Failed to take the challenge: ${err instanceof Error ? err.message : String(err)}`)
         })
         break
       }
@@ -147,9 +147,9 @@ async function takeChallenge(question: Question) {
       await fse.writeFile(finalPath, codeTemplate)
     }
   }
-  catch {
+  catch (err) {
     window.showErrorMessage(
-      `Failed to create the answer file in ${workspaceFolder}. Please check that the directory is writable, or update the workspace folder setting.`,
+      `Failed to create the answer file in ${workspaceFolder}: ${err instanceof Error ? err.message : String(err)}. Please check that the directory is writable, or update the workspace folder setting.`,
     )
     return
   }

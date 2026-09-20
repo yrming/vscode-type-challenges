@@ -24,8 +24,8 @@ interface IQuickItemEx<T> extends QuickPickItem {
 type LanguageType = 'zh' | 'en' | 'ja' | 'ko'
 
 export default async function selectWorkspaceFolder(): Promise<string> {
-  const configured: string = getWorkspaceFolder()
-  if (configured.trim() !== '') {
+  const configured: string = getWorkspaceFolder().trim()
+  if (configured !== '') {
     // A non-empty setting doesn't mean it's usable: Settings Sync may bring over
     // a path from another machine that neither exists nor can be created here.
     // Proactively ensure the directory; if that fails, treat it as invalid and
